@@ -11,6 +11,8 @@ import basicAuth from "express-basic-auth";
 import { config } from "./config/app.config.js";
 import { requestId } from "./middleware/requestID.middleware.js";
 import { swaggerSpec } from "./config/swagger.config.ts";
+import { errorHandler } from "./middleware/error.middleware.ts"
+import { notFoundHandler } from "./middleware/notFound.middleware.ts";
 
 export function createApp(): Application {
   const app = express();
@@ -61,15 +63,15 @@ export function createApp(): Application {
     swaggerUi.serve,
     swaggerUi.setup(swaggerSpec),
   );
-    app.get( `${api}/docs.json`, (_req, res) => res.json(swaggerSpec));
+  app.get(`${api}/docs.json`, (_req, res) => res.json(swaggerSpec));
 
   //   app.use(`${api}/health`, healthRouter);
 
-  // 404 handler
-  //   app.use(notFoundHandler);
+//   404 handler
+    app.use(notFoundHandler);
 
-  //   // Global error handler (must be last)
-  //   app.use(errorHandler);
+    // Global error handler (must be last)
+    app.use(errorHandler);
 
   return app;
 }
