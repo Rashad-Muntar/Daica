@@ -25,7 +25,7 @@ async function bootstrap() {
   // Graceful shutdown
   const shutdown = async (signal: string) => {
     logger.info(`Received ${signal}, shutting down gracefully...`);
-    
+
     server.close(async () => {
       await disconnectMongoDB();
       logger.info("Server closed");
