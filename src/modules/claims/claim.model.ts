@@ -33,22 +33,13 @@ const ClaimSchema = new Schema<ClaimDocument>(
 
     status: {
       type: String,
-      enum: [
-        "PENDING",
-        "UNDER_REVIEW",
-        "APPROVED",
-        "REJECTED",
-        "FLAGGED",
-      ],
+      enum: ["PENDING", "UNDER_REVIEW", "APPROVED", "REJECTED", "FLAGGED"],
       default: "PENDING",
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-export const ClaimModel = mongoose.model<ClaimDocument>(
-  "Claim",
-  ClaimSchema
-);
+export const ClaimModel = mongoose.model<ClaimDocument>("Claim", ClaimSchema);

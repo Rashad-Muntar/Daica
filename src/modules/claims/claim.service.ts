@@ -15,7 +15,7 @@ export class ClaimService {
       data.status,
     );
     if (!claim.isComplete) {
-     throw new UnprocessableEntityError("Claims is incomplete");
+      throw new UnprocessableEntityError("Claims is incomplete");
     }
 
     return this.repo.create(claim);
