@@ -2,11 +2,11 @@ import "dotenv/config";
 import { createApp } from "./app";
 import { config } from "./config/app.config";
 import { logger } from "./utils/logger";
-
+import { connectMongoDB, disconnectMongoDB } from "./db/db_setup";
 async function bootstrap() {
   const app = createApp();
   try {
-    // await connectMongoDB();
+    await connectMongoDB();
     logger.info("✅ MongoDB connected");
   } catch (err) {
     logger.error({ err }, "❌ Failed to connect to MongoDB");
@@ -25,7 +25,9 @@ async function bootstrap() {
   // Graceful shutdown
   const shutdown = async (signal: string) => {
     logger.info(`Received ${signal}, shutting down gracefully...`);
+    
     server.close(async () => {
+      await disconnectMongoDB();
       logger.info("Server closed");
       process.exit(0);
     });
