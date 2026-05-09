@@ -19,10 +19,7 @@ const FraudSchema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-export const FraudModel = mongoose.model(
-  "FraudAnalysis",
-  FraudSchema
-);
+export const FraudModel = mongoose.model("FraudAnalysis", FraudSchema);

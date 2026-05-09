@@ -18,6 +18,6 @@ export class FraudRules {
       score += 40;
       reasons.push("Invalid accident location");
     }
-    return {score, reasons };
+    return { score, reasons };
   }
 }
