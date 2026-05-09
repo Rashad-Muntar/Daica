@@ -6,14 +6,13 @@ export enum FraudRiskLevel {
 
 export class FraudAnalysis {
   constructor(
-    public claimId: string,
+    public claim_id: string,
     public score: number,
-    public riskLevel: FraudRiskLevel,
+    public risk_level: FraudRiskLevel,
     public reasons: string[],
-    public createdAt: Date = new Date()
   ) {}
 
   isHighRisk(): boolean {
-    return this.riskLevel === FraudRiskLevel.HIGH;
+    return this.risk_level === FraudRiskLevel.HIGH;
   }
 }

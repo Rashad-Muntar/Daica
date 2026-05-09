@@ -1,7 +1,7 @@
 import { Claim } from "./claim.entity";
 import { ClaimRepository } from "./claim.repository";
 import { UnprocessableEntityError } from "@/utils/errors";
-import type { IClaim } from "./claim.types";
+import type { IClaim } from "./claim.type";
 
 export class ClaimService {
   constructor(private repo: ClaimRepository) {}
