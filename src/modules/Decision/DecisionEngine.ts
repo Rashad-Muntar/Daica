@@ -1,5 +1,5 @@
 import { Claim } from "../claims/claim.entity";
-import { FraudAnalysis } from "../Fraud/fraudAnalysis.entity";
+import { FraudAnalysis } from "../fraud/fraudAnalysis.entity";
 import { Decision } from "./decision.entity";
 import { DecisionRules } from "./decisionRules";
 
