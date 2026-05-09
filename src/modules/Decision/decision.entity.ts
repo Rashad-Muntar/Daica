@@ -10,7 +10,7 @@ export class Decision {
     public type: DecisionType,
     public reason: string,
     public metadata: Record<string, unknown> = {},
-    public createdAt: Date = new Date()
+    public createdAt: Date = new Date(),
   ) {}
 
   requiresHumanReview(): boolean {
