@@ -1,19 +1,15 @@
-import type { Request, Response } from 'express';
-import { ZodError } from 'zod';
-import { logger } from '../utils/logger.ts';
-import { AppError } from '../utils/errors.ts';
-import { config } from '../config/app.config.ts';
+import type { Request, Response } from "express";
+import { ZodError } from "zod";
+import { logger } from "../utils/logger.ts";
+import { AppError } from "../utils/errors.ts";
+import { config } from "../config/app.config.ts";
 
-export function errorHandler(
-  err: Error,
-  req: Request,
-  res: Response,
-): void {
+export function errorHandler(err: Error, req: Request, res: Response): void {
   // Zod validation errors
   if (err instanceof ZodError) {
     res.status(422).json({
-      status: 'error',
-      message: 'Validation failed',
+      status: "error",
+      message: "Validation failed",
       errors: err.flatten().fieldErrors,
     });
     return;
@@ -22,7 +18,7 @@ export function errorHandler(
   // Application errors (operational)
   if (err instanceof AppError) {
     res.status(err.statusCode).json({
-      status: 'error',
+      status: "error",
       message: err.message,
       ...(err.errors && { errors: err.errors }),
     });
@@ -39,12 +35,12 @@ export function errorHandler(
         requestId: res.locals.requestId,
       },
     },
-    'Unhandled error',
+    "Unhandled error",
   );
 
   res.status(500).json({
-    status: 'error',
-    message: 'Internal server error',
+    status: "error",
+    message: "Internal server error",
     ...(config.isDevelopment && { stack: err.stack }),
   });
 }

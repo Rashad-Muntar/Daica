@@ -15,7 +15,7 @@ const envSchema = z.object({
   LOG_LEVEL: z
     .enum(["fatal", "error", "warn", "info", "debug", "trace"])
     .default("info"),
-  DATABASE_URL: z.string(),
+  DATABASE_URI: z.string(),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -41,5 +41,5 @@ export const config = {
   allowedOrigins: env.ALLOWED_ORIGINS,
   logLevel: env.LOG_LEVEL,
 
-  databaseUrl: env.DATABASE_URL,
+  databaseUrl: env.DATABASE_URI,
 } as const;
