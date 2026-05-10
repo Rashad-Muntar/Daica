@@ -71,9 +71,9 @@ export function createApp(): Application {
 
   // const client          = new WhatssapClient();
   const whatsappService = new WhatssapService();
-  const whatssapRouter  = createWhatssapRouter(whatsappService);
-    // app.use(`${api}/health`, healthRouter);
-    app.use(`${api}/meta`, whatssapRouter);
+  const whatssapRouter = createWhatssapRouter(whatsappService);
+  // app.use(`${api}/health`, healthRouter);
+  app.use(`${api}/meta`, whatssapRouter);
 
   //   404 handler
   app.use(notFoundHandler);

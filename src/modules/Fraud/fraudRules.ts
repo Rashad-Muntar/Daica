@@ -3,8 +3,8 @@ export class FraudRules {
   static evaluate(claim: Claim) {
     let score = 0;
     const reasons: string[] = [];
-    if(!claim.images){
-      throw new Error("Claims does not have images")
+    if (!claim.images) {
+      throw new Error("Claims does not have images");
     }
     if (claim.images.length === 0) {
       score += 30;

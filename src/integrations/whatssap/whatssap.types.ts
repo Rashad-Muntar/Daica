@@ -1,5 +1,5 @@
-export interface IncomingMessage{
-    senderId: string,
-    message: string,
-    timestamp:string
+export interface IncomingMessage {
+  userId: string;
+  message: string;
+  images: string[];
 }

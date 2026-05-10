@@ -18,9 +18,9 @@ export class WhatssappController {
     return res.sendStatus(403);
   }
 
-   receivedMessage = async (req: Request, res: Response) => {
+  receivedMessage = async (req: Request, res: Response) => {
     const parsedMessage = WhatsAppMessageParser.parse(req.body);
     await this.service.processIncomingMessage(parsedMessage);
     return res.sendStatus(200);
-  }
+  };
 }

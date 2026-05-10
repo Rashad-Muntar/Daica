@@ -4,7 +4,6 @@
 // import { logger } from "./utils/logger";
 // import { connectMongoDB, disconnectMongoDB } from "./db/db_setup";
 
-
 // async function bootstrap() {
 //   const app = createApp();
 //   try {
@@ -51,21 +50,19 @@
 
 // bootstrap();
 
-
-
-import 'dotenv/config';
-import { createApp } from './app';
-import { config } from './config/app.config';
-import { logger } from './utils/logger';
+import "dotenv/config";
+import { createApp } from "./app";
+import { config } from "./config/app.config";
+import { logger } from "./utils/logger";
 import { connectMongoDB, disconnectMongoDB } from "./db/db_setup";
 
 async function bootstrap() {
   const app = createApp();
   try {
     await connectMongoDB();
-    logger.info('✅ MongoDB connected');
+    logger.info("✅ MongoDB connected");
   } catch (err) {
-    logger.error({ err }, '❌ Failed to connect to MongoDB');
+    logger.error({ err }, "❌ Failed to connect to MongoDB");
     process.exit(1);
   }
 
@@ -78,7 +75,6 @@ async function bootstrap() {
     logger.info(`   Docs: http://localhost:${config.port}/docs`);
   });
 
-
   // Graceful shutdown
   const shutdown = async (signal: string) => {
     logger.info(`Received ${signal}, shutting down gracefully...`);
@@ -87,24 +83,23 @@ async function bootstrap() {
       await disconnectMongoDB();
       // const { redis } = await import('./utils/redis');
       // await redis.quit();
-      logger.info('Server closed');
+      logger.info("Server closed");
       process.exit(0);
     });
   };
 
-  process.on('SIGTERM', () => shutdown('SIGTERM'));
-  process.on('SIGINT', () => shutdown('SIGINT'));
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
+  process.on("SIGINT", () => shutdown("SIGINT"));
 
-  process.on('unhandledRejection', (reason) => {
-    logger.error({ reason }, 'Unhandled Promise Rejection');
+  process.on("unhandledRejection", (reason) => {
+    logger.error({ reason }, "Unhandled Promise Rejection");
     process.exit(1);
   });
 
-  process.on('uncaughtException', (err) => {
-    logger.fatal({ err }, 'Uncaught Exception');
+  process.on("uncaughtException", (err) => {
+    logger.fatal({ err }, "Uncaught Exception");
     process.exit(1);
   });
 }
 
 bootstrap();
-

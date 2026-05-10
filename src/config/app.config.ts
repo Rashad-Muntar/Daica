@@ -19,7 +19,7 @@ const envSchema = z.object({
   META_WA_SENDERPHONENUMBER_ID: z.string(),
   META_WA_VERIFYTOKEN: z.string(),
   META_WA_ACCESSTOKEN: z.string(),
-  META_WA_WABAID: z.string()
+  META_WA_WABAID: z.string(),
 });
 
 const parsed = envSchema.safeParse(process.env);
