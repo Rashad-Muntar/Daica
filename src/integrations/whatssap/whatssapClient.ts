@@ -4,13 +4,10 @@ import type { WhatsAppMessageParser } from "./whatssapMessageParser";
 export class WhatssapClient {
   constructor(private messageParser: WhatsAppMessageParser) {}
 
-async  sendText(recipientPhone:string, message:string) {
-  // console.log("Recipient:", recipientPhone,"Message:", message)
-    await this.messageParser.sendText(
-        recipientPhone,
-         message,
-    );
-}
+  async sendText(recipientPhone: string, message: string) {
+    // console.log("Recipient:", recipientPhone,"Message:", message)
+    await this.messageParser.sendText(recipientPhone, message);
+  }
 
   async sendImage(
     recipient: string,

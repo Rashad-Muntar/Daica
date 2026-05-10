@@ -18,7 +18,7 @@ export class WhatsAppMessageParser {
       messageBody: message.message,
       messageKey: message?.message?.message_id,
       mediaurl: message?.message?.images,
-      msgType: message?.message?.type
+      msgType: message?.message?.type,
     };
   }
 

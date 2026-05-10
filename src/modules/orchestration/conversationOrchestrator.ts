@@ -1,9 +1,7 @@
 import { ClaimService } from "../claims/claim.service";
 import { ConversationStateService } from "../conversation/conversation.service";
 import { ClaimStep } from "../conversation/conversation.types";
-import type {
-  ConversationState,
-} from "../conversation/conversation.types";
+import type { ConversationState } from "../conversation/conversation.types";
 import type { ISendMessage } from "@/integrations/whatssap/whatssap.types";
 
 export class ConversationOrchestrator {
@@ -20,14 +18,22 @@ export class ConversationOrchestrator {
         return this.handleStart(message.recipient, state);
 
       case ClaimStep.AWAITING_DESC:
-        return this.handleDescription(message.recipient, message.messageBody, state);
+        return this.handleDescription(
+          message.recipient,
+          message.messageBody,
+          state,
+        );
 
       case ClaimStep.AWAITING_LOCATION:
-        return this.handleLocation(message.recipient, message.messageBody, state);
+        return this.handleLocation(
+          message.recipient,
+          message.messageBody,
+          state,
+        );
 
       case ClaimStep.AWAITING_IMAGES:
-        if(!message.mediaurl){
-          throw new Error()
+        if (!message.mediaurl) {
+          throw new Error();
         }
         return this.handleImages(message.recipient, message.mediaurl, state);
 
@@ -120,7 +126,7 @@ export class ConversationOrchestrator {
       return `✅ Your claim has been submitted successfully!\n\nClaim ID: ${claim.user_id}`;
     } catch (err) {
       this.sessionService.clear(userId);
-      console.log("EROROOR", err)
+      console.log("EROROOR", err);
       return `${err}`;
     }
   }

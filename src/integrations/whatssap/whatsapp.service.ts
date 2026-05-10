@@ -4,7 +4,7 @@ import { ConversationOrchestrator } from "@/modules/orchestration/conversationOr
 
 // media_message
 // text_message
-// 
+//
 
 export class WhatssapService {
   constructor(
@@ -12,11 +12,11 @@ export class WhatssapService {
     private client: WhatssapClient,
   ) {}
   processIncomingMessage = async (message: ISendMessage) => {
-   const response = await this.orchestrator.handleMessage(message);
-    console.log(response)
-    switch (message.msgType){
+    const response = await this.orchestrator.handleMessage(message);
+    console.log(response);
+    switch (message.msgType) {
       case "text_message":
-        await this.client.sendText(message.recipient, response)
+        await this.client.sendText(message.recipient, response);
     }
     // await this.client.sendMessage(message);
   };

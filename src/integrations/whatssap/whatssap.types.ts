@@ -1,7 +1,7 @@
 export interface IncomingMessage {
   userId: string;
   message: string;
-  type: string,
+  type: string;
   images: string[];
 }
 
