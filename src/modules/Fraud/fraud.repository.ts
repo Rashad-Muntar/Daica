@@ -1,9 +1,8 @@
 import { FraudModel } from "./fraud.model";
-import type { IFraudAnalysis } from "./fraud.type";
-
+import { FraudAnalysis } from "./fraudAnalysis.entity";
 export class FraudRepository {
-  async create(analysis: IFraudAnalysis) {
-    return FraudModel.create({
+  async create(analysis: FraudAnalysis) {
+    return await FraudModel.create({
       claim_id: analysis.claim_id,
       score: analysis.score,
       risk_level: analysis.risk_level,

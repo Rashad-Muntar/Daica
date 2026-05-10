@@ -13,6 +13,10 @@ import { requestId } from "./middleware/requestID.middleware.js";
 import { swaggerSpec } from "./config/swagger.config.ts";
 import { errorHandler } from "./middleware/error.middleware.ts";
 import { notFoundHandler } from "./middleware/notFound.middleware.ts";
+// import { WhatssapClient } from "./integrations/whatssap/whatssapClient.ts";
+import { createWhatssapRouter } from "./integrations/whatssap/whatssap.route.ts";
+// import { WhatssappController } from "./integrations/whatssap/whatssap.controller.ts";
+import { WhatssapService } from "./integrations/whatssap/whatsapp.service.ts";
 
 export function createApp(): Application {
   const app = express();
@@ -65,7 +69,11 @@ export function createApp(): Application {
   );
   app.get(`${api}/docs.json`, (_req, res) => res.json(swaggerSpec));
 
-  //   app.use(`${api}/health`, healthRouter);
+  // const client          = new WhatssapClient();
+  const whatsappService = new WhatssapService();
+  const whatssapRouter  = createWhatssapRouter(whatsappService);
+    // app.use(`${api}/health`, healthRouter);
+    app.use(`${api}/meta`, whatssapRouter);
 
   //   404 handler
   app.use(notFoundHandler);

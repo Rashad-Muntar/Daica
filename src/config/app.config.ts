@@ -16,6 +16,10 @@ const envSchema = z.object({
     .enum(["fatal", "error", "warn", "info", "debug", "trace"])
     .default("info"),
   DATABASE_URI: z.string(),
+  META_WA_SENDERPHONENUMBER_ID: z.string(),
+  META_WA_VERIFYTOKEN: z.string(),
+  META_WA_ACCESSTOKEN: z.string(),
+  META_WA_WABAID: z.string()
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -40,6 +44,9 @@ export const config = {
   secretKey: env.SECRET_KEY,
   allowedOrigins: env.ALLOWED_ORIGINS,
   logLevel: env.LOG_LEVEL,
-
+  WaAccessToken: env.META_WA_ACCESSTOKEN,
+  WaSenderPhoneNumberId: env.META_WA_SENDERPHONENUMBER_ID,
+  WaVerifytoken: env.META_WA_VERIFYTOKEN,
+  WaWabaId: env.META_WA_WABAID,
   databaseUrl: env.DATABASE_URI,
 } as const;

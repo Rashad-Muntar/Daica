@@ -1,5 +1,6 @@
 import { Claim } from "./claim.entity";
 import { ClaimModel } from "./claim.model";
+import { ClaimMapper } from "./claim.mapper";
 
 export class ClaimRepository {
   async create(claim: Claim) {
@@ -7,11 +8,11 @@ export class ClaimRepository {
       user_id: claim.user_id,
       description: claim.description,
       location: claim.location,
-      images: claim.images,
-      status: claim.status,
+      images: claim.images ?? [],
+      status: claim.status ?? "PENDING",
     });
 
-    return createdClaim;
+    return ClaimMapper.toEntity(createdClaim);
   }
 
   async findById(id: string) {

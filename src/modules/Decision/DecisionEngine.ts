@@ -1,10 +1,9 @@
 import { FraudAnalysis } from "../fraud/fraudAnalysis.entity";
 import { Decision } from "./decision.entity";
 import { DecisionRules } from "./decisionRules";
-import type { IClaim } from "../claims/claim.type";
-
+import { Claim } from "../claims/claim.entity";
 export class DecisionEngine {
-  evaluate(claim: IClaim, fraud: FraudAnalysis): Decision {
+  evaluate(claim: Claim, fraud: FraudAnalysis): Decision {
     return DecisionRules.evaluate(claim, fraud);
   }
 }

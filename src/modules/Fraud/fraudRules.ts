@@ -1,8 +1,11 @@
-import type { IClaim } from "../claims/claim.type";
+import { Claim } from "../claims/claim.entity";
 export class FraudRules {
-  static evaluate(claim: IClaim) {
+  static evaluate(claim: Claim) {
     let score = 0;
     const reasons: string[] = [];
+    if(!claim.images){
+      throw new Error("Claims does not have images")
+    }
     if (claim.images.length === 0) {
       score += 30;
       reasons.push("No supporting images provided");

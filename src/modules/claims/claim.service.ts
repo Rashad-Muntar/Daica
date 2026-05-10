@@ -7,6 +7,12 @@ export class ClaimService {
   constructor(private repo: ClaimRepository) {}
 
   async createClaim(data: IClaim) {
+    if(!data.images){
+      throw new Error()
+    }
+    if(!data.status){
+      throw new Error()
+    }
     const claim = new Claim(
       data.user_id,
       data.description,

@@ -1,11 +1,11 @@
 import { FraudAnalysis, FraudRiskLevel } from "./fraudAnalysis.entity";
 import { FraudRules } from "./fraudRules";
 import { FraudRepository } from "./fraud.repository";
-import type { IClaim } from "../claims/claim.type";
+import { Claim } from "../claims/claim.entity";
 
 export class FraudService {
   constructor(private repo: FraudRepository) {}
-  async analyzeClaim(claim: IClaim): Promise<FraudAnalysis> {
+  async analyzeClaim(claim: Claim): Promise<FraudAnalysis> {
     const result = FraudRules.evaluate(claim);
     let riskLevel = FraudRiskLevel.LOW;
 

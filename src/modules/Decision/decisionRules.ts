@@ -1,8 +1,9 @@
 import { FraudAnalysis } from "../fraud/fraudAnalysis.entity";
 import { Decision, DecisionType } from "./decision.entity";
-import type { IClaim } from "../claims/claim.type";
+import { Claim } from "../claims/claim.entity";
+
 export class DecisionRules {
-  static evaluate(claim: IClaim, fraud: FraudAnalysis): Decision {
+  static evaluate(claim: Claim, fraud: FraudAnalysis): Decision {
     if (!claim.isComplete()) {
       return new Decision(
         DecisionType.REQUEST_MORE_INFO,
