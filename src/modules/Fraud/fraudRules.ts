@@ -1,7 +1,6 @@
-import { Claim } from "../claims/claim.entity";
-
+import type { IClaim } from "../claims/claim.type";
 export class FraudRules {
-  static evaluate(claim: Claim) {
+  static evaluate(claim: IClaim) {
     let score = 0;
     const reasons: string[] = [];
     if (claim.images.length === 0) {
