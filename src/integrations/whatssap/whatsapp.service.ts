@@ -8,20 +8,16 @@ export class WhatssapService {
     private client: WhatssapClient,
   ) {}
   processIncomingMessage = async (message: IncomingMessage) => {
-    const response = await this.orchestrator.handleMessage(
-    message
-    );
-
-    await this.client.sendMessage(message.userId, response);
-  
-  }
+     await this.orchestrator.handleMessage(message);
+    // switch: 
+    // await this.client.sendMessage(message);
+  };
 }
 
+//   const workflows = await this.orchestrator.handleClaimSubmission({
+//       user_id: message.senderId,
+//       description: message.message,
+//       location: "Unknown"
+//   })
 
-    //   const workflows = await this.orchestrator.handleClaimSubmission({
-    //       user_id: message.senderId,
-    //       description: message.message,
-    //       location: "Unknown"
-    //   })
-
-      //   await this.client.sendMessage(message.senderId, workflows.decision.reason || "Processed")
+//   await this.client.sendMessage(message.senderId, workflows.decision.reason || "Processed")

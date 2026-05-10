@@ -79,7 +79,7 @@ export class ConversationOrchestrator {
     images: string[],
     state: ConversationState,
   ): Promise<string> {
-    if (images.length === 0) {
+    if (!images || images.length === 0) {
       return "Please send at least one photo of the damage.";
     }
 

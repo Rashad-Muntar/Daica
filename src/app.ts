@@ -16,8 +16,8 @@ import { notFoundHandler } from "./middleware/notFound.middleware.ts";
 // import { WhatssapClient } from "./integrations/whatssap/whatssapClient.ts";
 import { createWhatssapRouter } from "./integrations/whatssap/whatssap.route.ts";
 // import { WhatssappController } from "./integrations/whatssap/whatssap.controller.ts";
-import { WhatssapService } from "./integrations/whatssap/whatsapp.service.ts";
-
+// import { WhatssapService } from "./integrations/whatssap/whatsapp.service.ts";
+import { buildAppContainer } from "./composition/composition.root.ts";
 export function createApp(): Application {
   const app = express();
 
@@ -68,9 +68,9 @@ export function createApp(): Application {
     swaggerUi.setup(swaggerSpec),
   );
   app.get(`${api}/docs.json`, (_req, res) => res.json(swaggerSpec));
-
+const container =  buildAppContainer()
   // const client          = new WhatssapClient();
-  const whatsappService = new WhatssapService();
+  const {whatsappService} = container
   const whatssapRouter = createWhatssapRouter(whatsappService);
   // app.use(`${api}/health`, healthRouter);
   app.use(`${api}/meta`, whatssapRouter);
