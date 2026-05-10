@@ -5,5 +5,5 @@ export interface IClaim {
   images: string[];
   status: string;
   createdAt: Date;
-  isComplete?: () => boolean
+  isComplete?: () => boolean;
 }
