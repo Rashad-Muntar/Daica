@@ -68,9 +68,9 @@ export function createApp(): Application {
     swaggerUi.setup(swaggerSpec),
   );
   app.get(`${api}/docs.json`, (_req, res) => res.json(swaggerSpec));
-const container =  buildAppContainer()
+  const container = buildAppContainer();
   // const client          = new WhatssapClient();
-  const {whatsappService} = container
+  const { whatsappService } = container;
   const whatssapRouter = createWhatssapRouter(whatsappService);
   // app.use(`${api}/health`, healthRouter);
   app.use(`${api}/meta`, whatssapRouter);

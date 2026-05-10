@@ -3,8 +3,8 @@ import { ConversationStateService } from "../conversation/conversation.service";
 import { ClaimStep } from "../conversation/conversation.types";
 import type {
   ConversationState,
-  IMessage,
 } from "../conversation/conversation.types";
+import type { ISendMessage } from "@/integrations/whatssap/whatssap.types";
 
 export class ConversationOrchestrator {
   constructor(
@@ -12,27 +12,30 @@ export class ConversationOrchestrator {
     private sessionService: ConversationStateService,
   ) {}
 
-  handleMessage = async (message: IMessage): Promise<string> => {
-    const state = this.sessionService.get(message.userId);
+  handleMessage = async (message: ISendMessage): Promise<string> => {
+    const state = this.sessionService.get(message.recipient);
 
     switch (state.step) {
       case ClaimStep.START:
-        return this.handleStart(message.userId, state);
+        return this.handleStart(message.recipient, state);
 
       case ClaimStep.AWAITING_DESC:
-        return this.handleDescription(message.userId, message.message, state);
+        return this.handleDescription(message.recipient, message.messageBody, state);
 
       case ClaimStep.AWAITING_LOCATION:
-        return this.handleLocation(message.userId, message.message, state);
+        return this.handleLocation(message.recipient, message.messageBody, state);
 
       case ClaimStep.AWAITING_IMAGES:
-        return this.handleImages(message.userId, message.images, state);
+        if(!message.mediaurl){
+          throw new Error()
+        }
+        return this.handleImages(message.recipient, message.mediaurl, state);
 
       case ClaimStep.AWAITING_POLICY:
-        return this.handlePolicy(message.userId, message.message, state);
+        return this.handlePolicy(message.recipient, message.messageBody, state);
 
       default:
-        this.sessionService.clear(message.userId);
+        this.sessionService.clear(message.recipient);
         return "Something went wrong. Type *start* to begin again.";
     }
   };
@@ -117,6 +120,7 @@ export class ConversationOrchestrator {
       return `✅ Your claim has been submitted successfully!\n\nClaim ID: ${claim.user_id}`;
     } catch (err) {
       this.sessionService.clear(userId);
+      console.log("EROROOR", err)
       return `${err}`;
     }
   }

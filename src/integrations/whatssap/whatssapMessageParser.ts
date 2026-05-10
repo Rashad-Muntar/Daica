@@ -1,4 +1,4 @@
-import type { IncomingMessage } from "./whatssap.types";
+import type { ISendMessage } from "./whatssap.types";
 //@ts-expect-error This does not have available type
 import WhatsappCloudAPI from "whatsappcloudapi_wrapper";
 import { config } from "@/config/app.config";
@@ -10,70 +10,82 @@ const Whatsapp = new WhatsappCloudAPI({
 });
 
 export class WhatsAppMessageParser {
-  static parse(payload: unknown): IncomingMessage {
+  static parse(payload: unknown): ISendMessage {
     const message = Whatsapp.parseMessage(payload);
     console.log(message);
     return {
-      userId: message.message.from,
-      message: message.message.text.body,
-      images: message.message.images,
+      recipient: message?.message?.from,
+      messageBody: message.message,
+      messageKey: message?.message?.message_id,
+      mediaurl: message?.message?.images,
+      msgType: message?.message?.type
     };
   }
 
-  async sendText(recipientPhone:string, message:string) {
+  async sendText(recipientPhone: string, message: string) {
     await Whatsapp.sendText({
-        recipientPhone: recipientPhone,
-        message: message,
+      recipientPhone: recipientPhone,
+      message: message,
     });
-}
+  }
 
-async  sendImage(recipientPhone:string, message:string, imagepath:string) {
+  async sendImage(recipientPhone: string, message: string, imagepath: string) {
     await Whatsapp.sendImage({
-        recipientPhone: recipientPhone,
-        caption: message,
-        url: imagepath,
+      recipientPhone: recipientPhone,
+      caption: message,
+      url: imagepath,
     });
+  }
 
-}
-
-async  sendSimpleButtons(recipientPhone:string, message:string, buttonlist:[]) {
+  async sendSimpleButtons(
+    recipientPhone: string,
+    message: string,
+    buttonlist: [],
+  ) {
     await Whatsapp.sendSimpleButtons({
-        recipientPhone: recipientPhone,
-        message: message,
-        listOfButtons: buttonlist
+      recipientPhone: recipientPhone,
+      message: message,
+      listOfButtons: buttonlist,
     });
+  }
 
-}
-
-async sendSimpleRadioButtons(recipientPhone:string, message:string, headerText:string, actionText:string, listofSections: []) {
+  async sendSimpleRadioButtons(
+    recipientPhone: string,
+    message: string,
+    headerText: string,
+    actionText: string,
+    listofSections: [],
+  ) {
     await Whatsapp.sendRadioButtons({
-        recipientPhone: recipientPhone,
-        headerText: headerText,
-        bodyText: message,
-        actionText: actionText,
-        footerText: process.env.BOT_NAME,
-        listOfSections: listofSections
+      recipientPhone: recipientPhone,
+      headerText: headerText,
+      bodyText: message,
+      actionText: actionText,
+      footerText: process.env.BOT_NAME,
+      listOfSections: listofSections,
     });
+  }
 
-}
-
-async  sendSimpleLocation(recipientPhone:string, warehouse:IWarehouse) {
+  async sendSimpleLocation(recipientPhone: string, warehouse: IWarehouse) {
     await Whatsapp.sendLocation({
-        recipientPhone,
-        latitude: warehouse.latitude,
-        longitude: warehouse.longitude,
-        address: warehouse.address,
-        name: process.env.BOT_NAME,
+      recipientPhone,
+      latitude: warehouse.latitude,
+      longitude: warehouse.longitude,
+      address: warehouse.address,
+      name: process.env.BOT_NAME,
     });
+  }
 
-}
-
-async  sendMediaDocument(recipientPhone:string, message:string, url:string) {
+  async sendMediaDocument(
+    recipientPhone: string,
+    message: string,
+    url: string,
+  ) {
     await Whatsapp.sendDocument({
-        recipientPhone: recipientPhone,
-        caption: message,
-        url: url,
-        filename: message,
+      recipientPhone: recipientPhone,
+      caption: message,
+      url: url,
+      filename: message,
     });
-}
+  }
 }

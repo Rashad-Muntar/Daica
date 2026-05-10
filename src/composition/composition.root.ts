@@ -28,7 +28,7 @@ export function buildAppContainer() {
   // SERVICES
   // ========================
   const claimService = new ClaimService(claimRepository);
-new FraudService(fraudRepository);
+  new FraudService(fraudRepository);
 
   const sessionService = new ConversationStateService();
 
@@ -39,19 +39,19 @@ new FraudService(fraudRepository);
   // ========================
   const conversationOrchestrator = new ConversationOrchestrator(
     claimService,
-    sessionService
+    sessionService,
   );
 
   // ========================
   // WHATSAPP
   // ========================
 
-  const messageParser = new WhatsAppMessageParser()
+  const messageParser = new WhatsAppMessageParser();
   const whatsappClient = new WhatssapClient(messageParser);
 
   const whatsappService = new WhatssapService(
     conversationOrchestrator,
-    whatsappClient
+    whatsappClient,
   );
 
   return {
