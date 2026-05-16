@@ -8,7 +8,7 @@ import { DecisionEngine } from "@/modules/decision/DecisionEngine";
 
 import { ConversationStateService } from "@/modules/conversation/conversation.service";
 import { ConversationOrchestrator } from "@/modules/orchestration/conversationOrchestrator";
-
+import { ConversationStepHandler } from "@/modules/orchestration/conversationStepHandler";
 import { WhatssapClient } from "@/integrations/whatssap/whatssapClient";
 import { WhatssapService } from "@/integrations/whatssap/whatsapp.service";
 
@@ -37,18 +37,23 @@ export function buildAppContainer() {
   // ========================
   // ORCHESTRATOR
   // ========================
-  const conversationOrchestrator = new ConversationOrchestrator(
-    claimService,
-    sessionService,
-  );
-
-  // ========================
-  // WHATSAPP
-  // ========================
 
   const messageParser = new WhatsAppMessageParser();
   const whatsappClient = new WhatssapClient(messageParser);
 
+  const conversationHandler = new ConversationStepHandler(claimService, sessionService)
+
+  const conversationOrchestrator = new ConversationOrchestrator(
+    conversationHandler,
+    sessionService,
+  );
+
+  
+  // ========================
+  // WHATSAPP
+  // ========================
+
+  
   const whatsappService = new WhatssapService(
     conversationOrchestrator,
     whatsappClient,

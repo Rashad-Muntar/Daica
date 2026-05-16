@@ -5,9 +5,21 @@ export interface IncomingMessage {
   images: string[];
 }
 
-export interface ISendMessage {
-  recipient: string;
-  messageBody: string;
+export interface IRecipient {
+  name: string;
+  phone: string;
+}
+
+// interface ISendMessage<T = string> {
+//   recipient: string;
+//   messageBody: T;
+//   // ...
+// }
+
+
+export interface ISendMessage  {
+  recipient: IRecipient;
+  messageBody: Record<string, unknown>;
   messageKey: string;
   replacementText?: string;
   mediaurl?: string[];

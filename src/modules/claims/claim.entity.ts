@@ -1,8 +1,10 @@
 export class Claim {
   constructor(
     public user_id: string,
-    public description: string,
     public location: string,
+    public policyNumber: string,
+    public accidentDate: Date,
+    public vehicleNumber: string,
     public images: string[],
     public status: string,
   ) {}
@@ -11,7 +13,7 @@ export class Claim {
     this.status = status;
   }
   isComplete(): boolean {
-    return !!(this.description && this.location);
+    return !!(this.location);
   }
 }
 

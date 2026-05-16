@@ -20,6 +20,11 @@ export class WhatssappController {
 
   receivedMessage = async (req: Request, res: Response) => {
     const parsedMessage = WhatsAppMessageParser.parse(req.body);
+  
+    if(!parsedMessage){
+      return;
+    }
+  
     await this.service.processIncomingMessage(parsedMessage);
     return res.sendStatus(200);
   };

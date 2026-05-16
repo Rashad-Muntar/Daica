@@ -15,10 +15,12 @@ export class ClaimService {
     }
     const claim = new Claim(
       data.user_id,
-      data.description,
       data.location,
+      data.policyNumber,
+      data.accidentDate,
+      data.vehicleNumber,
       data.images,
-      data.status,
+      data.status
     );
     if (!claim.isComplete) {
       throw new UnprocessableEntityError("Claims is incomplete");

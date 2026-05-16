@@ -13,10 +13,7 @@ import { requestId } from "./middleware/requestID.middleware.js";
 import { swaggerSpec } from "./config/swagger.config.ts";
 import { errorHandler } from "./middleware/error.middleware.ts";
 import { notFoundHandler } from "./middleware/notFound.middleware.ts";
-// import { WhatssapClient } from "./integrations/whatssap/whatssapClient.ts";
 import { createWhatssapRouter } from "./integrations/whatssap/whatssap.route.ts";
-// import { WhatssappController } from "./integrations/whatssap/whatssap.controller.ts";
-// import { WhatssapService } from "./integrations/whatssap/whatsapp.service.ts";
 import { buildAppContainer } from "./composition/composition.root.ts";
 export function createApp(): Application {
   const app = express();

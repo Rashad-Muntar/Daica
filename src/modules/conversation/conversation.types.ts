@@ -2,21 +2,27 @@
 
 export enum ClaimStep {
   START = "START",
-  AWAITING_DESC = "AWAITING_DESC",
+  AWAITING_NUMBER="AWAITING_NUMBER",
+  AWAITING_POLICY_NUMBER = "AWAITING_POLICY_NUMBER",
+  AWAITING_DATE="AWAITING_DATE",
   AWAITING_LOCATION = "AWAITING_LOCATION",
   AWAITING_IMAGES = "AWAITING_IMAGES",
-  AWAITING_POLICY = "AWAITING_POLICY",
   COMPLETE = "COMPLETE",
 }
 
 export interface ConversationState {
   userId: string;
-  step: ClaimStep;
+  currentStep: ClaimStep;
+  nextStep: ClaimStep;
+  lastMessage: string,
+  updatedAt: Date,
+  goBack: string
   data: {
-    description?: string;
-    location?: string;
+    vehicleNumber: string;
+    policyNumber: string;
+    accidentDate: string;
+    location: string;
     images?: string[];
-    policyNumber?: string;
   };
 }
 
