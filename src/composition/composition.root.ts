@@ -14,6 +14,8 @@ import { WhatssapClient } from "@/integrations/whatssap/whatssapClient";
 import { WhatssapService } from "@/integrations/whatssap/whatsapp.service";
 
 import { WhatsAppMessageParser } from "@/integrations/whatssap/whatssapMessageParser";
+import { AIService } from "@/modules/ai/ai.service";
+import { AIClient } from "@/modules/ai/ai.client";
 /**
  * SINGLE RESPONSIBILITY:
  * Wire all dependencies together.
@@ -31,13 +33,15 @@ export function buildAppContainer() {
   const claimService = new ClaimService(claimRepository);
   const fraudService = new FraudService(fraudRepository);
   const decisionEngine = new DecisionEngine();
+  const aiClient = new AIClient
+  const aiService = new AIService(aiClient)
 
   const sessionService = new ConversationStateService();
 
   // ========================
   // ORCHESTRATOR
   // ========================
-  const claimOrchest = new ClaimOrchestrator(fraudService, decisionEngine);
+  const claimOrchest = new ClaimOrchestrator(fraudService, decisionEngine, aiService);
 
   const messageParser = new WhatsAppMessageParser();
   const whatsappClient = new WhatssapClient(messageParser);

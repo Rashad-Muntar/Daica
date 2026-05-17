@@ -14,17 +14,13 @@ export class AIService {
     fraud: FraudAnalysis,
   ): Promise<AIAssessmentResult> {
     // 1. Build prompt (context engineering layer)
-    const prompt = AIPromptBuilder.buildClaimAssessmentPrompt(
-      claim,
-      fraud,
-    );
+    const prompt = AIPromptBuilder.buildClaimAssessmentPrompt(claim, fraud);
 
     // 2. Call model (external dependency layer)
     const rawResponse = await this.client.generate(prompt);
 
     // 3. Parse + validate (safety layer)
-    const parsed =
-      AIResponseParser.parse(rawResponse);
+    const parsed = AIResponseParser.parse(rawResponse);
 
     return parsed;
   }

@@ -17,7 +17,6 @@ export class AIClient {
       input: prompt,
     });
 
-
     return response.output_text;
   }
 }

@@ -1,6 +1,7 @@
 import { Claim } from "../claims/claim.entity";
 import { FraudAnalysis } from "../fraud/fraudAnalysis.entity";
 
+
 export class AIPromptBuilder {
   static buildClaimAssessmentPrompt(
     claim: Claim,
@@ -8,6 +9,8 @@ export class AIPromptBuilder {
   ): string {
     return `
 You are an insurance claims assessment assistant in Ghana with the expertice of analysing and detecting insurance claims fraud.
+
+Very important: Claim failing requirement should look at in the Ghanaian context. Example in filling for claim, the client does not provide claim amount. Since the policy number is requested we fetch the claim amount based on the policy number.
 
 Analyze the submitted claim objectively.
 

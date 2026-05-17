@@ -9,11 +9,8 @@ export class Decision {
   constructor(
     public type: DecisionType,
     public reason: string,
-    public metadata: Record<string, unknown> = {},
-    public createdAt: Date = new Date(),
+    public confidence: number,
+    public explainability: string[],
   ) {}
 
-  requiresHumanReview(): boolean {
-    return this.type === DecisionType.ESCALATE;
-  }
 }

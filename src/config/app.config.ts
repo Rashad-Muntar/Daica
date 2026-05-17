@@ -20,7 +20,7 @@ const envSchema = z.object({
   META_WA_VERIFYTOKEN: z.string(),
   META_WA_ACCESSTOKEN: z.string(),
   META_WA_WABAID: z.string(),
-  GROQ_API_KEY: z.string()
+  GROQ_API_KEY: z.string(),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -50,5 +50,5 @@ export const config = {
   WaVerifytoken: env.META_WA_VERIFYTOKEN,
   WaWabaId: env.META_WA_WABAID,
   databaseUrl: env.DATABASE_URI,
-  AIApiKey: env.GROQ_API_KEY
+  AIApiKey: env.GROQ_API_KEY,
 } as const;
