@@ -5,7 +5,10 @@ import type { IClaim } from "./claim.type";
 import { EventBus } from "../events/eventBus";
 import { EventType } from "../events/event.types";
 export class ClaimService {
-  constructor(private repo: ClaimRepository, private eventBus: EventBus) {}
+  constructor(
+    private repo: ClaimRepository,
+    private eventBus: EventBus,
+  ) {}
 
   async createClaim(data: IClaim) {
     // console.log("FROM", data)
@@ -27,16 +30,13 @@ export class ClaimService {
       throw new UnprocessableEntityError("Claims is incomplete");
     }
 
-    const savedClaim = await this.repo.create(claim)
+    const savedClaim = await this.repo.create(claim);
 
     this.eventBus.publish({
       type: EventType.CLAIM_SUBMITTED,
       timestamp: new Date(),
-      payload: claim
-    })
-    return savedClaim
+      payload: claim,
+    });
+    return savedClaim;
   }
-
-  
-
 }

@@ -5,10 +5,7 @@ type EventHandler<T = any> = (event: DomainEvent<T>) => void | Promise<void>;
 export class EventBus {
   private handlers: Map<EventType, EventHandler[]> = new Map();
 
-  subscribe<T>(
-    eventType: EventType,
-    handler: EventHandler<T>,
-  ) {
+  subscribe<T>(eventType: EventType, handler: EventHandler<T>) {
     if (!this.handlers.has(eventType)) {
       this.handlers.set(eventType, []);
     }
@@ -25,10 +22,7 @@ export class EventBus {
       try {
         await handler(event);
       } catch (err) {
-        console.error(
-          `Event handler failed for ${event.type}`,
-          err,
-        );
+        console.error(`Event handler failed for ${event.type}`, err);
       }
     }
   }

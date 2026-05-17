@@ -30,7 +30,7 @@ export function buildAppContainer() {
   // ========================
   // SERVICES
   // ========================
-  const eventBus = new EventBus()
+  const eventBus = new EventBus();
   const claimService = new ClaimService(claimRepository, eventBus);
   const fraudService = new FraudService(fraudRepository);
   const decisionEngine = new DecisionEngine();
