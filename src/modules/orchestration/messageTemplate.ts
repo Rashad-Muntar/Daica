@@ -16,7 +16,7 @@ export class Messages {
     };
     return { newState, response: { current, next, onAnswered } };
   }
-  
+
   static AWAITING_NUMBER(state: ConversationState, message: any) {
     const current = "Please provide your policy number";
     const next = null;

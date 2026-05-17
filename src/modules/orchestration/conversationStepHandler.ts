@@ -8,7 +8,7 @@ export class ConversationStepHandler {
   constructor(
     private claimService: ClaimService,
     private sessionService: ConversationStateService,
-    private claimsOrches: ClaimOrchestrator
+    private claimsOrches: ClaimOrchestrator,
   ) {}
 
   async handleStep(
@@ -212,7 +212,7 @@ export class ConversationStepHandler {
       // })
 
       // await this.claimProcessing(newState)
-        const claim = await this.claimService.createClaim({
+      const claim = await this.claimService.createClaim({
         user_id: newState.userId,
         policyNumber: newState.data.policyNumber,
         accidentDate: new Date(newState.data.accidentDate),
@@ -221,11 +221,12 @@ export class ConversationStepHandler {
         status: "PENDING",
       });
       // console.log("CREATED", claim)
-  
-     const claimDecision =  await this.claimsOrches.handleClaimSubmission(claim)
-     console.log("DECISION", claimDecision)
-     
-     return {
+
+      const claimDecision =
+        await this.claimsOrches.handleClaimSubmission(claim);
+      console.log("DECISION", claimDecision);
+
+      return {
         newState,
         response: " your claim detail. Please wait",
       };
@@ -282,10 +283,11 @@ export class ConversationStepHandler {
         images: finalState.data.images ?? [],
         status: "PENDING",
       });
-  
-     const claimDecision =  await this.claimsOrches.handleClaimSubmission(claim)
+
+      const claimDecision =
+        await this.claimsOrches.handleClaimSubmission(claim);
       // ✅ await — clear session after successful claim
-      console.log(claimDecision)
+      console.log(claimDecision);
       await this.sessionService.clear(finalState.userId);
       return {
         newState: state,

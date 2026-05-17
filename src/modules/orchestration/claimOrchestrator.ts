@@ -15,6 +15,6 @@ export class ClaimOrchestrator {
 
     const decision = this.decisionEngine.evaluate(claim, fraud);
 
-    return decision
+    return decision;
   }
 }

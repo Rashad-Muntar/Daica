@@ -4,7 +4,7 @@ export class FraudRules {
   static evaluate(claim: Claim) {
     let score = 0;
     const reasons: string[] = [];
-    const isMorethan10Days = isMoreThan10DaysAgo(claim.accidentDate)
+    const isMorethan10Days = isMoreThan10DaysAgo(claim.accidentDate);
     if (!claim.images) {
       throw new Error("Claims does not have images");
     }

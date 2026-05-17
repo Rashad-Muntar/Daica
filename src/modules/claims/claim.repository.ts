@@ -4,7 +4,6 @@ import { ClaimMapper } from "./claim.mapper";
 
 export class ClaimRepository {
   async create(claim: Claim) {
-    
     const createdClaim = await ClaimModel.create({
       user_id: claim.user_id,
       policyNumber: claim.policyNumber,
