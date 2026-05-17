@@ -57,10 +57,8 @@ import { logger } from "./utils/logger";
 import { connectMongoDB, disconnectMongoDB } from "./db/db_setup";
 // import { ConversationStateService } from "./modules/conversation/conversation.service";
 
-
 async function bootstrap() {
   const app = createApp();
-
 
   try {
     await connectMongoDB();

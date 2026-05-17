@@ -10,21 +10,21 @@ const Whatsapp = new WhatsappCloudAPI({
 });
 
 export class WhatsAppMessageParser {
-// whatssapMessageParser.ts
-static parse(payload: unknown): ISendMessage | null {
-  const message = Whatsapp.parseMessage(payload);
+  // whatssapMessageParser.ts
+  static parse(payload: unknown): ISendMessage | null {
+    const message = Whatsapp.parseMessage(payload);
 
-  // Status updates & other events have no message body — skip them
-  if (!message?.message?.type) return null;
+    // Status updates & other events have no message body — skip them
+    if (!message?.message?.type) return null;
 
-  return {
-    recipient: message.message.from,
-    messageBody: message.message,
-    messageKey: message.message.message_id,
-    mediaurl: message.message.images,
-    msgType: message.message.type,
-  };
-}
+    return {
+      recipient: message.message.from,
+      messageBody: message.message,
+      messageKey: message.message.message_id,
+      mediaurl: message.message.images,
+      msgType: message.message.type,
+    };
+  }
 
   async sendText(recipientPhone: string, message: string) {
     await Whatsapp.sendText({

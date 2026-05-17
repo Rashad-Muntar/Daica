@@ -27,7 +27,6 @@ export class ConversationStateService {
         updatedAt: new Date(),
         goBack: "",
         data: {
-          vehicleNumber: "",
           policyNumber: "",
           accidentDate: "",
           location: "",
@@ -59,28 +58,18 @@ export class ConversationStateService {
     });
   }
 
-  // async clear(userId: string): Promise<void> {
-  //   if (!this.redis.isOpen) {
-  //     await this.connect();
-  //   }
-  //   console.log("CELARED", userId)
-  //   const rd = await this.redis.del(`session:${userId}`);
-  //   console.log(rd)
-  // }
-
-   async clear(userId: string): Promise<void> {
-
+  async clear(userId: string): Promise<void> {
     console.log("Redis isOpen:", this.redis.isOpen);
-    
+
     const key = `session:${userId}`;
-    
+
     // Get the value before deletion to verify content
     const value = await this.redis.get(key);
     console.log("Value before deletion:", value);
-    
+
     const rd = await this.redis.del(key);
     console.log("Delete result:", rd);
-    
+
     // Try to get after deletion
     const afterValue = await this.redis.get(key);
     console.log("Value after deletion:", afterValue);

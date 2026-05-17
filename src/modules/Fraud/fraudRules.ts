@@ -1,8 +1,10 @@
+import { isMoreThan10DaysAgo } from "@/utils/dates.utils";
 import { Claim } from "../claims/claim.entity";
 export class FraudRules {
   static evaluate(claim: Claim) {
     let score = 0;
     const reasons: string[] = [];
+    const isMorethan10Days = isMoreThan10DaysAgo(claim.accidentDate)
     if (!claim.images) {
       throw new Error("Claims does not have images");
     }
@@ -11,9 +13,9 @@ export class FraudRules {
       reasons.push("No supporting images provided");
     }
 
-    if (claim.description.length < 20) {
+    if (isMorethan10Days) {
       score += 20;
-      reasons.push("Very short accident description");
+      reasons.push("Accident is more than 10 days");
     }
 
     if (claim.location.toLowerCase() === "unknown") {

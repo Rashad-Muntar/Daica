@@ -4,9 +4,8 @@ export interface ClaimDocument extends Document {
   user_id: string;
   description: string;
   location: string;
-  policyNumber: string,
-  accidentDate: Date,
-  vehicleNumber: string,
+  policyNumber: string;
+  accidentDate: Date;
   images: string[];
   status: string;
   createdAt: Date;
@@ -26,15 +25,10 @@ const ClaimSchema = new Schema<ClaimDocument>(
       type: Date,
       required: true,
     },
-    vehicleNumber: {
-      type: String,
-      required: true,
-    },
     description: {
       type: String,
       required: false,
     },
-
     location: {
       type: String,
       required: true,

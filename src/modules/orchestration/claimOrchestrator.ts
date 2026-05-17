@@ -1,4 +1,3 @@
-import { WorkflowContext } from "./workflowContext";
 import { FraudService } from "../fraud/fraud.service";
 import { DecisionEngine } from "../decision/DecisionEngine";
 
@@ -10,11 +9,12 @@ export class ClaimOrchestrator {
     private decisionEngine: DecisionEngine,
   ) {}
 
-  async handleClaimSubmission(claim: Claim): Promise<WorkflowContext> {
+  async handleClaimSubmission(claim: Claim) {
+    // console.log(claim)
     const fraud = await this.fraudService.analyzeClaim(claim);
 
     const decision = this.decisionEngine.evaluate(claim, fraud);
 
-    return new WorkflowContext(claim, fraud, decision);
+    return decision
   }
 }

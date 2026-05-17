@@ -5,8 +5,9 @@ export class ClaimMapper {
   static toEntity(document: ClaimDocument): Claim {
     return new Claim(
       document.user_id,
-      document.description,
       document.location,
+      document.policyNumber,
+      document.accidentDate,
       document.images,
       document.status,
     );

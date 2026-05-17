@@ -4,7 +4,6 @@ export class Claim {
     public location: string,
     public policyNumber: string,
     public accidentDate: Date,
-    public vehicleNumber: string,
     public images: string[],
     public status: string,
   ) {}
@@ -13,7 +12,7 @@ export class Claim {
     this.status = status;
   }
   isComplete(): boolean {
-    return !!(this.location);
+    return !!this.location;
   }
 }
 

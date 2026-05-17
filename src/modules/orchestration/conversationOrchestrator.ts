@@ -7,30 +7,27 @@ export class ConversationOrchestrator {
     private sessionService: ConversationStateService,
   ) {}
 
-    handleMessage = async (message: ISendMessage): Promise<string> => {
+  handleMessage = async (message: ISendMessage): Promise<string> => {
     try {
-      // Get current state
       const state = await this.sessionService.get(message.recipient.phone);
-      let userMessage = ""
-      // Extract message content
 
-      
+      let userMessage = "";
+
       userMessage = message.messageBody as any;
-
-      const images =  message.messageBody.image ? 
-        (Array.isArray(message.mediaurl) ? message.mediaurl : [message.mediaurl]) 
+      // console.log(message.messageBody);
+      const images = message.messageBody.image
+        ? [message.messageBody.image?.url]
         : undefined;
 
       const { newState, response } = await this.stepHandler.handleStep(
         state,
         userMessage,
-        images
+        images,
       );
 
       await this.sessionService.save(message.recipient.phone, newState);
 
       return response;
-      
     } catch (error) {
       console.error("Error handling message:", error);
       return "An error occurred. Please try again or type 'start' to restart.";

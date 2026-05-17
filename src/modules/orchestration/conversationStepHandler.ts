@@ -2,11 +2,13 @@ import type { ClaimService } from "../claims/claim.service";
 import type { ConversationStateService } from "../conversation/conversation.service";
 import type { ConversationState } from "../conversation/conversation.types";
 import { ClaimStep } from "../conversation/conversation.types";
+import type { ClaimOrchestrator } from "./claimOrchestrator";
 
 export class ConversationStepHandler {
   constructor(
     private claimService: ClaimService,
     private sessionService: ConversationStateService,
+    private claimsOrches: ClaimOrchestrator
   ) {}
 
   async handleStep(
@@ -14,7 +16,7 @@ export class ConversationStepHandler {
     userMessage: any,
     images?: any,
   ): Promise<{ newState: ConversationState; response: string }> {
-    userMessage = userMessage.text?.body ;
+    userMessage = userMessage.text?.body;
 
     switch (state.currentStep) {
       case ClaimStep.START:
@@ -176,6 +178,9 @@ export class ConversationStepHandler {
         "Please take photos of the damage and send them here (you can send multiple):",
     };
   }
+  // private async claimProcessing(state: ConversationState): Promise<string>{
+  //   return "We are reviewing your claim detail. Please wait"
+  // }
 
   private async handleImages(
     state: ConversationState,
@@ -183,8 +188,9 @@ export class ConversationStepHandler {
     images?: any,
   ): Promise<{ newState: ConversationState; response: string }> {
     // Handle images
+    // console.log(userMessage, images)
     if (images && images.length > 0) {
-      console.log("jdshfhds", images);
+      // console.log("jdshfhds", images);
       const currentImages = state.data.images || [];
       const newImages = [...currentImages, ...images];
 
@@ -195,10 +201,33 @@ export class ConversationStepHandler {
         lastMessage: userMessage,
         updatedAt: new Date(),
       };
-         return {
+
+      // console.log({
+      //   user_id: newState.userId,
+      //   policyNumber: newState.data.policyNumber,
+      //   accidentDate: new Date(newState.data.accidentDate),
+      //   location: newState.data.location!,
+      //   images: newState.data.images ?? [],
+      //   status: "PENDING",
+      // })
+
+      // await this.claimProcessing(newState)
+        const claim = await this.claimService.createClaim({
+        user_id: newState.userId,
+        policyNumber: newState.data.policyNumber,
+        accidentDate: new Date(newState.data.accidentDate),
+        location: newState.data.location,
+        images: newState.data.images ?? [],
+        status: "PENDING",
+      });
+      // console.log("CREATED", claim)
+  
+     const claimDecision =  await this.claimsOrches.handleClaimSubmission(claim)
+     console.log("DECISION", claimDecision)
+     
+     return {
         newState,
-        response:
-          "We are reviewing your claim detail. Please wait",
+        response: " your claim detail. Please wait",
       };
     } else {
       return {
@@ -243,28 +272,28 @@ export class ConversationStepHandler {
       currentStep: ClaimStep.COMPLETE,
       data: { ...state.data },
     };
-    console.log(finalState)
+    console.log(finalState);
     try {
       const claim = await this.claimService.createClaim({
         user_id: finalState.userId,
-        vehicleNumber: finalState.data.vehicleNumber || "1232123",
         policyNumber: finalState.data.policyNumber,
         accidentDate: new Date(finalState.data.accidentDate),
         location: finalState.data.location!,
         images: finalState.data.images ?? [],
         status: "PENDING",
       });
-      console.log("vcvcvcvccvc", claim)
+  
+     const claimDecision =  await this.claimsOrches.handleClaimSubmission(claim)
       // ✅ await — clear session after successful claim
+      console.log(claimDecision)
       await this.sessionService.clear(finalState.userId);
       return {
         newState: state,
-        response:
-          `✅ Your claim has been submitted successfully!\n\nClaim ID: ${claim.user_id}. \n\nWait while we review your claim`,
+        response: `✅ Your ${claimDecision?.reason} \n\n Our support will contact you shortly to conclude`,
       };
       // return `✅ Your claim has been submitted successfully!\n\nClaim ID: ${claim.user_id}. \n\nWait while we review your claim`;
     } catch (error) {
-      console.log(error)
+      console.log(error);
       await this.sessionService.clear(finalState.userId);
 
       return {

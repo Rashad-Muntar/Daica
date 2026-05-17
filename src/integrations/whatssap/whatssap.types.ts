@@ -16,10 +16,9 @@ export interface IRecipient {
 //   // ...
 // }
 
-
-export interface ISendMessage  {
+export interface ISendMessage {
   recipient: IRecipient;
-  messageBody: Record<string, unknown>;
+  messageBody: Record<string, any>;
   messageKey: string;
   replacementText?: string;
   mediaurl?: string[];

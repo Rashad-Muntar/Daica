@@ -1,8 +1,7 @@
 export interface IClaim {
   user_id: string;
   accidentDate: Date;
-  policyNumber: string,
-  vehicleNumber: string
+  policyNumber: string;
   location: string;
   images?: string[];
   status?: string;

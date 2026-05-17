@@ -7,6 +7,7 @@ export class ClaimService {
   constructor(private repo: ClaimRepository) {}
 
   async createClaim(data: IClaim) {
+    // console.log("FROM", data)
     if (!data.images) {
       throw new Error();
     }
@@ -18,9 +19,8 @@ export class ClaimService {
       data.location,
       data.policyNumber,
       data.accidentDate,
-      data.vehicleNumber,
       data.images,
-      data.status
+      data.status,
     );
     if (!claim.isComplete) {
       throw new UnprocessableEntityError("Claims is incomplete");

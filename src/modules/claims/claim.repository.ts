@@ -4,11 +4,11 @@ import { ClaimMapper } from "./claim.mapper";
 
 export class ClaimRepository {
   async create(claim: Claim) {
+    
     const createdClaim = await ClaimModel.create({
       user_id: claim.user_id,
       policyNumber: claim.policyNumber,
       accidentDate: claim.accidentDate,
-      vehicleNumber: claim.vehicleNumber,
       location: claim.location,
       images: claim.images ?? [],
       status: claim.status ?? "PENDING",
