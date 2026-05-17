@@ -12,5 +12,4 @@ export class Decision {
     public confidence: number,
     public explainability: string[],
   ) {}
-
 }

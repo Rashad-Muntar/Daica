@@ -2,9 +2,10 @@ import { Claim } from "./claim.entity";
 import { ClaimRepository } from "./claim.repository";
 import { UnprocessableEntityError } from "@/utils/errors";
 import type { IClaim } from "./claim.type";
-
+import { EventBus } from "../events/eventBus";
+import { EventType } from "../events/event.types";
 export class ClaimService {
-  constructor(private repo: ClaimRepository) {}
+  constructor(private repo: ClaimRepository, private eventBus: EventBus) {}
 
   async createClaim(data: IClaim) {
     // console.log("FROM", data)
@@ -22,14 +23,20 @@ export class ClaimService {
       data.images,
       data.status,
     );
-    if (!claim.isComplete) {
+    if (!claim.isComplete()) {
       throw new UnprocessableEntityError("Claims is incomplete");
     }
 
-    return this.repo.create(claim);
+    const savedClaim = await this.repo.create(claim)
+
+    this.eventBus.publish({
+      type: EventType.CLAIM_SUBMITTED,
+      timestamp: new Date(),
+      payload: claim
+    })
+    return savedClaim
   }
 
-  async flagClaim(id: string) {
-    return this.repo.updateStatus(id, "FLAGGED");
-  }
+  
+
 }

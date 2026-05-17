@@ -12,7 +12,7 @@ import { ClaimOrchestrator } from "@/modules/orchestration/claimOrchestrator";
 import { ConversationStepHandler } from "@/modules/orchestration/conversationStepHandler";
 import { WhatssapClient } from "@/integrations/whatssap/whatssapClient";
 import { WhatssapService } from "@/integrations/whatssap/whatsapp.service";
-
+import { EventBus } from "@/modules/events/eventBus";
 import { WhatsAppMessageParser } from "@/integrations/whatssap/whatssapMessageParser";
 import { AIService } from "@/modules/ai/ai.service";
 import { AIClient } from "@/modules/ai/ai.client";
@@ -30,18 +30,23 @@ export function buildAppContainer() {
   // ========================
   // SERVICES
   // ========================
-  const claimService = new ClaimService(claimRepository);
+  const eventBus = new EventBus()
+  const claimService = new ClaimService(claimRepository, eventBus);
   const fraudService = new FraudService(fraudRepository);
   const decisionEngine = new DecisionEngine();
-  const aiClient = new AIClient
-  const aiService = new AIService(aiClient)
+  const aiClient = new AIClient();
+  const aiService = new AIService(aiClient);
 
   const sessionService = new ConversationStateService();
 
   // ========================
   // ORCHESTRATOR
   // ========================
-  const claimOrchest = new ClaimOrchestrator(fraudService, decisionEngine, aiService);
+  const claimOrchest = new ClaimOrchestrator(
+    fraudService,
+    decisionEngine,
+    aiService,
+  );
 
   const messageParser = new WhatsAppMessageParser();
   const whatsappClient = new WhatssapClient(messageParser);

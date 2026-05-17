@@ -7,15 +7,15 @@ export class ClaimOrchestrator {
   constructor(
     private fraudService: FraudService,
     private decisionEngine: DecisionEngine,
-    private aiService: AIService
+    private aiService: AIService,
   ) {}
 
   async handleClaimSubmission(claim: Claim) {
     // console.log(claim)
     const fraud = await this.fraudService.analyzeClaim(claim);
-    const aiResult = await this.aiService.assessClaim(claim, fraud)
+    const aiResult = await this.aiService.assessClaim(claim, fraud);
     const decision = this.decisionEngine.evaluate(claim, fraud, aiResult);
-    console.log(decision)
+    console.log(decision);
     return decision;
   }
 }

@@ -1,7 +1,6 @@
 import { Claim } from "../claims/claim.entity";
 import { FraudAnalysis } from "../fraud/fraudAnalysis.entity";
 
-
 export class AIPromptBuilder {
   static buildClaimAssessmentPrompt(
     claim: Claim,
