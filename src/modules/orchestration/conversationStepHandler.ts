@@ -287,7 +287,6 @@ export class ConversationStepHandler {
       const claimDecision =
         await this.claimsOrches.handleClaimSubmission(claim);
       // ✅ await — clear session after successful claim
-      console.log(claimDecision);
       await this.sessionService.clear(finalState.userId);
       return {
         newState: state,

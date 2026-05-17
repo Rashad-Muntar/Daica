@@ -7,7 +7,7 @@ export class AIPromptBuilder {
     fraud: FraudAnalysis,
   ): string {
     return `
-You are an insurance claims assessment assistant.
+You are an insurance claims assessment assistant in Ghana with the expertice of analysing and detecting insurance claims fraud.
 
 Analyze the submitted claim objectively.
 
@@ -20,7 +20,6 @@ Your responsibilities:
 
 Claim Data:
 - User ID: ${claim.user_id}
-- Description: ${claim.description}
 - AccidentDate: ${claim.accidentDate}
 - Location: ${claim.location}
 - Images: ${claim.images.join(", ")}
@@ -31,14 +30,14 @@ Fraud Analysis:
 - Risk Level: ${fraud.risk_level}
 - Fraud Reasons: ${fraud.reasons.join(", ")}
 
-Return ONLY valid JSON in this exact format:
+Return ONLY valid JSON in this exact format: No commentary or statement.
 
 {
   "summary": "",
   "missingInformation": [],
   "contradictions": [],
   "urgency": "LOW | MEDIUM | HIGH",
-  "recommendation": "AUTO_APPROVE | HUMAN_REVIEW | ESCALATE",
+  "recommendation": "APPROVE | REJECT | ESCALATE | REQUEST_MORE_INFO",
   "confidence": 0
 }
 `;
