@@ -1,6 +1,6 @@
 import { ConversationStateService } from "../conversation/conversation.service";
 import type { ISendMessage } from "@/integrations/whatssap/whatssap.types";
-import { ConversationStepHandler } from "./conversationStepHandler";
+import { ConversationStepHandler } from "./conversationStep.handler";
 export class ConversationOrchestrator {
   constructor(
     private stepHandler: ConversationStepHandler,

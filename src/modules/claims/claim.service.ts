@@ -30,6 +30,7 @@ export class ClaimService {
       throw new UnprocessableEntityError("Claims is incomplete");
     }
 
+    
     const savedClaim = await this.repo.create(claim);
 
     this.eventBus.publish({
@@ -37,6 +38,7 @@ export class ClaimService {
       timestamp: new Date(),
       payload: claim,
     });
+    console.log("FROM CLAIM SERVICE", savedClaim)
     return savedClaim;
   }
 }

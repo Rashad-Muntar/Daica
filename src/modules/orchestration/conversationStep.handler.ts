@@ -2,13 +2,12 @@ import type { ClaimService } from "../claims/claim.service";
 import type { ConversationStateService } from "../conversation/conversation.service";
 import type { ConversationState } from "../conversation/conversation.types";
 import { ClaimStep } from "../conversation/conversation.types";
-import type { ClaimOrchestrator } from "./claimOrchestrator";
+
 
 export class ConversationStepHandler {
   constructor(
     private claimService: ClaimService,
     private sessionService: ConversationStateService,
-    private claimsOrches: ClaimOrchestrator,
   ) {}
 
   async handleStep(
@@ -95,12 +94,6 @@ export class ConversationStepHandler {
       newState,
       response: "Thank you. Please provide your policy number:",
     };
-
-    // // Stay on AWAITING_NUMBER until valid number is provided
-    // return {
-    //   newState: state,
-    //   response: "Invalid phone number. Please enter a valid number (10-15 digits):"
-    // };
   }
 
   private async handlePolicyNumber(
@@ -178,17 +171,11 @@ export class ConversationStepHandler {
         "Please take photos of the damage and send them here (you can send multiple):",
     };
   }
-  // private async claimProcessing(state: ConversationState): Promise<string>{
-  //   return "We are reviewing your claim detail. Please wait"
-  // }
-
   private async handleImages(
     state: ConversationState,
     userMessage: string,
     images?: any,
   ): Promise<{ newState: ConversationState; response: string }> {
-    // Handle images
-    // console.log(userMessage, images)
     if (images && images.length > 0) {
       // console.log("jdshfhds", images);
       const currentImages = state.data.images || [];
@@ -202,17 +189,7 @@ export class ConversationStepHandler {
         updatedAt: new Date(),
       };
 
-      // console.log({
-      //   user_id: newState.userId,
-      //   policyNumber: newState.data.policyNumber,
-      //   accidentDate: new Date(newState.data.accidentDate),
-      //   location: newState.data.location!,
-      //   images: newState.data.images ?? [],
-      //   status: "PENDING",
-      // })
-
-      // await this.claimProcessing(newState)
-      const claim = await this.claimService.createClaim({
+      await this.claimService.createClaim({
         user_id: newState.userId,
         policyNumber: newState.data.policyNumber,
         accidentDate: new Date(newState.data.accidentDate),
@@ -220,11 +197,6 @@ export class ConversationStepHandler {
         images: newState.data.images ?? [],
         status: "PENDING",
       });
-      // console.log("CREATED", claim)
-
-      const claimDecision =
-        await this.claimsOrches.handleClaimSubmission(claim);
-      console.log("DECISION", claimDecision);
 
       return {
         newState,
@@ -237,30 +209,6 @@ export class ConversationStepHandler {
           "Please send at least one photo of the damage. Type 'done' when finished.",
       };
     }
-    // return {
-    //   newState,
-    //   response:
-    //     newImages.length >= 3
-    //       ? "Thank you for the photos! Your claim is now complete. We'll review it shortly."
-    //       : `Received ${newImages.length}/3 photos. Please send ${3 - newImages.length} more photo(s) or type 'done' if finished:`,
-    // };
-
-    // If no images but user says done
-    // if ((state.data.images?.length || 0) > 0) {
-    //   const newState: ConversationState = {
-    //     ...state,
-    //     currentStep: ClaimStep.COMPLETE,
-    //     updatedAt: new Date(),
-    //   };
-
-    //   return {
-    //     newState,
-    //     response:
-    //       "Thank you! Your claim has been submitted. You will receive a response within 24 hours.",
-    //   };
-    // }
-
-    // Stay on AWAITING_IMAGES until images are provided
   }
 
   private async handleComplete(
@@ -275,7 +223,7 @@ export class ConversationStepHandler {
     };
     console.log(finalState);
     try {
-      const claim = await this.claimService.createClaim({
+       await this.claimService.createClaim({
         user_id: finalState.userId,
         policyNumber: finalState.data.policyNumber,
         accidentDate: new Date(finalState.data.accidentDate),
@@ -284,13 +232,12 @@ export class ConversationStepHandler {
         status: "PENDING",
       });
 
-      const claimDecision =
-        await this.claimsOrches.handleClaimSubmission(claim);
+     ;
       // ✅ await — clear session after successful claim
       await this.sessionService.clear(finalState.userId);
       return {
         newState: state,
-        response: `✅ Your ${claimDecision?.reason} \n\n Our support will contact you shortly to conclude`,
+        response: `✅ Your claim is submitted successfully. Our support will contact you shortly to conclude`,
       };
       // return `✅ Your claim has been submitted successfully!\n\nClaim ID: ${claim.user_id}. \n\nWait while we review your claim`;
     } catch (error) {
@@ -303,10 +250,5 @@ export class ConversationStepHandler {
           "Your 2 claim has been submitted. We'll contact you soon. Type 'start' to begin a new claim.",
       };
     }
-    // return {
-    //   newState: state,
-    //   response:
-    //     "Your claim has already been submitted. We'll contact you soon. Type 'start' to begin a new claim.",
-    // };
   }
 }
