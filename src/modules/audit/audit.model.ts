@@ -16,7 +16,4 @@ const AuditSchema = new Schema<AuditDocument>(
   { timestamps: true },
 );
 
-export const AuditModel = mongoose.model(
-  "AuditLog",
-  AuditSchema,
-);
+export const AuditModel = mongoose.model("AuditLog", AuditSchema);
