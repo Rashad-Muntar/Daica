@@ -19,6 +19,12 @@ import { DecisionHandler } from "@/modules/decision/decision.handler";
 import { AIService } from "@/modules/ai/ai.service";
 import { AIClient } from "@/modules/ai/ai.client";
 import { NotificationHandler } from "@/modules/notifications/notification.handler";
+import { AuditHandler } from "@/modules/audit/audit.handler";
+import { AuditService } from "@/modules/audit/audit.service";
+import { AuditRepository } from "@/modules/audit/audit.repository";
+
+
+
 
 /**
  * SINGLE RESPONSIBILITY:
@@ -30,7 +36,7 @@ export function buildAppContainer() {
   // ========================
   const claimRepository = new ClaimRepository();
   const fraudRepository = new FraudRepository();
-
+  const auditRepository = new AuditRepository()
   // ========================
   // SERVICES
   // ========================
@@ -41,6 +47,8 @@ export function buildAppContainer() {
   const sessionService = new ConversationStateService();
   const aiClient = new AIClient();
   const aiService = new AIService(aiClient);
+  const auditService =  new AuditService(auditRepository)
+  
   // ========================
   // ORCHESTRATOR
   // ========================
@@ -78,10 +86,13 @@ export function buildAppContainer() {
 
   const decisionHandler = new DecisionHandler(eventBus, decisionEngine);
   const notificationHandler = new NotificationHandler(eventBus, whatsappClient);
+  const auditHandler = new AuditHandler(eventBus, auditService)
+  
   fraudHandler.register();
   aiHandler.register();
   decisionHandler.register();
   notificationHandler.register();
+  auditHandler.register()
 
   return {
     whatsappService,

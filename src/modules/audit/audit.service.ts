@@ -1,9 +1,7 @@
 import { AuditRepository } from "./audit.repository";
 
 export class AuditService {
-  constructor(
-    private repo: AuditRepository,
-  ) {}
+  constructor(private repo: AuditRepository) {}
 
   async log(
     eventType: string,
