@@ -53,7 +53,7 @@
 import "dotenv/config";
 import { createApp } from "./app";
 import { config } from "./config/app.config";
-import { logger } from "./utils/logger";
+import { logger } from "./config/logger";
 import { connectMongoDB, disconnectMongoDB } from "./db/db_setup";
 // import { ConversationStateService } from "./modules/conversation/conversation.service";
 

@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { ZodError } from "zod";
-import { logger } from "../utils/logger.ts";
+import { logger } from "../config/logger.ts";
 import { AppError } from "../utils/errors.ts";
 import { config } from "../config/app.config.ts";
 

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { logger } from "../utils/logger";
+import { logger } from "../config/logger";
 import { config } from "@/config/app.config";
 
 const MONGODB_URI = config.databaseUrl || "mongodb://localhost:27017/isppots";
