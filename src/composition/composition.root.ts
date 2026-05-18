@@ -77,11 +77,11 @@ export function buildAppContainer() {
   const aiHandler = new AIHandler(eventBus, aiService);
 
   const decisionHandler = new DecisionHandler(eventBus, decisionEngine);
-  const notificationHandler = new NotificationHandler(eventBus, whatsappClient)
+  const notificationHandler = new NotificationHandler(eventBus, whatsappClient);
   fraudHandler.register();
   aiHandler.register();
   decisionHandler.register();
-  notificationHandler.register()
+  notificationHandler.register();
 
   return {
     whatsappService,

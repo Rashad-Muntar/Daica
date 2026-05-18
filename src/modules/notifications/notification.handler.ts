@@ -11,19 +11,16 @@ export class NotificationHandler {
   ) {}
 
   register() {
-    this.eventBus.subscribe(
-      EventType.DECISION_MADE,
-      async (event) => {
-        const { claim, decision } = event.payload as {claim: Claim, decision: Decision};
+    this.eventBus.subscribe(EventType.DECISION_MADE, async (event) => {
+      const { claim, decision } = event.payload as {
+        claim: Claim;
+        decision: Decision;
+      };
 
-        const message = this.buildDecisionMessage(decision);
+      const message = this.buildDecisionMessage(decision);
 
-        await this.whatsappClient.sendText(
-          claim.user_id,
-          message,
-        );
-      },
-    );
+      await this.whatsappClient.sendText(claim.user_id, message);
+    });
   }
 
   private buildDecisionMessage(decision: any): string {

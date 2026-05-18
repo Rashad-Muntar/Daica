@@ -3,7 +3,6 @@ import type { ConversationStateService } from "../conversation/conversation.serv
 import type { ConversationState } from "../conversation/conversation.types";
 import { ClaimStep } from "../conversation/conversation.types";
 
-
 export class ConversationStepHandler {
   constructor(
     private claimService: ClaimService,
@@ -223,7 +222,7 @@ export class ConversationStepHandler {
     };
     console.log(finalState);
     try {
-       await this.claimService.createClaim({
+      await this.claimService.createClaim({
         user_id: finalState.userId,
         policyNumber: finalState.data.policyNumber,
         accidentDate: new Date(finalState.data.accidentDate),
@@ -232,7 +231,6 @@ export class ConversationStepHandler {
         status: "PENDING",
       });
 
-     ;
       // ✅ await — clear session after successful claim
       await this.sessionService.clear(finalState.userId);
       return {
