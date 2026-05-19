@@ -22,6 +22,9 @@ import { NotificationHandler } from "@/modules/notifications/notification.handle
 import { AuditHandler } from "@/modules/audit/audit.handler";
 import { AuditService } from "@/modules/audit/audit.service";
 import { AuditRepository } from "@/modules/audit/audit.repository";
+import { EvidenceHandler } from "@/modules/evidence/evidence.handler";
+import { EvidenceService } from "@/modules/evidence/evidence.service";
+import { EvidenceClient } from "@/modules/evidence/evidence.client";
 
 /**
  * SINGLE RESPONSIBILITY:
@@ -52,11 +55,13 @@ export function buildAppContainer() {
 
   const messageParser = new WhatsAppMessageParser();
   const whatsappClient = new WhatssapClient(messageParser);
-
+  const evidenceClient = new EvidenceClient()
   const conversationHandler = new ConversationStepHandler(
     claimService,
     sessionService,
   );
+
+  const evidenceService = new EvidenceService(evidenceClient)
 
   const conversationOrchestrator = new ConversationOrchestrator(
     conversationHandler,
@@ -84,12 +89,14 @@ export function buildAppContainer() {
   const decisionHandler = new DecisionHandler(eventBus, decisionEngine);
   const notificationHandler = new NotificationHandler(eventBus, whatsappClient);
   const auditHandler = new AuditHandler(eventBus, auditService);
-
+  const evidenceHandler = new EvidenceHandler(eventBus, evidenceService)
+  
   fraudHandler.register();
   aiHandler.register();
   decisionHandler.register();
   notificationHandler.register();
   auditHandler.register();
+  evidenceHandler.register()
 
   return {
     whatsappService,
