@@ -14,7 +14,7 @@ export class WhatssappController {
     if (mode === "subscribe" && token === config.WaVerifytoken) {
       return res.status(200).send(challenge);
     }
-    console.log("Whatssap verified")
+    console.log("Whatssap verified");
     return res.sendStatus(403);
   }
 

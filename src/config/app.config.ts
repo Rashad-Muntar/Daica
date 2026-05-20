@@ -23,7 +23,7 @@ const envSchema = z.object({
   GROQ_API_KEY: z.string(),
   CLOUDINARY_CLOUD_NAME: z.string(),
   CLOUDINARY_API_KEY: z.string(),
-  CLOUDINARY_API_SECRET: z.string()
+  CLOUDINARY_API_SECRET: z.string(),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -56,5 +56,5 @@ export const config = {
   AIApiKey: env.GROQ_API_KEY,
   cloudinaryName: env.CLOUDINARY_CLOUD_NAME,
   cloudinaryKey: env.CLOUDINARY_API_KEY,
-  cloudinarySecret: env.CLOUDINARY_API_SECRET
+  cloudinarySecret: env.CLOUDINARY_API_SECRET,
 } as const;

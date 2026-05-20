@@ -9,7 +9,7 @@ import type { CloudinaryService } from "@/integrations/cloudinary/cloudinary.ser
 type StepResult = {
   newState: ConversationState | undefined;
   response: string | undefined;
-  buttons?: { title: string, id: string }[] | undefined;
+  buttons?: { title: string; id: string }[] | undefined;
   locationRequest?: boolean | undefined;
 };
 
@@ -17,7 +17,7 @@ export class ConversationStepHandler {
   constructor(
     private claimService: ClaimService,
     private sessionService: ConversationStateService,
-    private cloudMediaService: CloudinaryService
+    private cloudMediaService: CloudinaryService,
   ) {}
 
   async handleStep(
@@ -96,7 +96,7 @@ export class ConversationStepHandler {
     data: Partial<ConversationState["data"]>,
     response: string,
     userMessage: string,
-    buttons?: { title: string, id: string }[],
+    buttons?: { title: string; id: string }[],
   ): StepResult {
     return {
       newState: {
@@ -114,7 +114,7 @@ export class ConversationStepHandler {
   private invalid(
     state: ConversationState,
     response: string,
-    buttons?: { title: string, id: string }[],
+    buttons?: { title: string; id: string }[],
   ): StepResult {
     return { newState: state, response, buttons };
   }
@@ -172,89 +172,93 @@ export class ConversationStepHandler {
   //   );
   // }
 
-//   private async handleStart(state: ConversationState, userMessage: string): Promise<StepResult> {
-//   if (["hi", "hello", "hey"].includes(userMessage.toLowerCase().trim())) {
-//     return {
-//       newState: { ...state, currentStep: ClaimStep.START },
-//       response: "👋 Welcome to *DAICA Claims*!\n\nHow can we help you today?",
-//       buttons: [
-//         { title: "🚗 File a Claim", id: "start" },
-//         { title: "❓ Ask Question", id: "question" },
-//       ],
-//     };
-//   }
+  //   private async handleStart(state: ConversationState, userMessage: string): Promise<StepResult> {
+  //   if (["hi", "hello", "hey"].includes(userMessage.toLowerCase().trim())) {
+  //     return {
+  //       newState: { ...state, currentStep: ClaimStep.START },
+  //       response: "👋 Welcome to *DAICA Claims*!\n\nHow can we help you today?",
+  //       buttons: [
+  //         { title: "🚗 File a Claim", id: "start" },
+  //         { title: "❓ Ask Question", id: "question" },
+  //       ],
+  //     };
+  //   }
 
-//   if (userMessage.toLowerCase().trim() === "start") {
-//     return this.next(
-//       state,
-//       ClaimStep.AWAITING_POLICY_NUMBER,
-//       {},
-//       "Let's begin filing your claim.\n\nPlease enter your *policy number*\n_Eg: POL-121211_",
-//       userMessage,
-//     );
-//   }
+  //   if (userMessage.toLowerCase().trim() === "start") {
+  //     return this.next(
+  //       state,
+  //       ClaimStep.AWAITING_POLICY_NUMBER,
+  //       {},
+  //       "Let's begin filing your claim.\n\nPlease enter your *policy number*\n_Eg: POL-121211_",
+  //       userMessage,
+  //     );
+  //   }
 
-//   if (userMessage.toLowerCase().trim() === "question") {
-//     return {
-//       newState: state,
-//       response: "Please type your question and our support team will assist you shortly. 🙏",
-//     };
-//   }
+  //   if (userMessage.toLowerCase().trim() === "question") {
+  //     return {
+  //       newState: state,
+  //       response: "Please type your question and our support team will assist you shortly. 🙏",
+  //     };
+  //   }
 
-//   // Catch anyone who types "start" manually
-//   if (userMessage.toLowerCase().trim() === "start") {
-//     return {
-//       newState: { ...state, currentStep: ClaimStep.START },
-//       response: "👋 Welcome to *DAICA Claims*!\n\nHow can we help you today?",
-//       buttons: [
-//         { title: "🚗 File a Claim", id: "start" },
-//         { title: "❓ Ask Question", id:"question" },
-//       ],
-//     };
-//   }
+  //   // Catch anyone who types "start" manually
+  //   if (userMessage.toLowerCase().trim() === "start") {
+  //     return {
+  //       newState: { ...state, currentStep: ClaimStep.START },
+  //       response: "👋 Welcome to *DAICA Claims*!\n\nHow can we help you today?",
+  //       buttons: [
+  //         { title: "🚗 File a Claim", id: "start" },
+  //         { title: "❓ Ask Question", id:"question" },
+  //       ],
+  //     };
+  //   }
 
-//   return {
-//     newState: state,
-//     response: "👋 Welcome to *DAICA Claims*!\n\nHow can we help you today?",
-//     buttons: [
-//       { title: "🚗 File a Claim", id: "start" },
-//       { title: "❓ Ask Question", id: "question" },
-//     ],
-//   };
-// }
+  //   return {
+  //     newState: state,
+  //     response: "👋 Welcome to *DAICA Claims*!\n\nHow can we help you today?",
+  //     buttons: [
+  //       { title: "🚗 File a Claim", id: "start" },
+  //       { title: "❓ Ask Question", id: "question" },
+  //     ],
+  //   };
+  // }
 
-private async handleStart(state: ConversationState, userMessage: string): Promise<StepResult> {
-  const msg = userMessage.toLowerCase().trim();
+  private async handleStart(
+    state: ConversationState,
+    userMessage: string,
+  ): Promise<StepResult> {
+    const msg = userMessage.toLowerCase().trim();
 
-  // Button "🚗 File a Claim" sends back id: "start"
-  if (msg === "start") {
-    return this.next(
-      state,
-      ClaimStep.AWAITING_POLICY_NUMBER,
-      {},
-      "Let's begin filing your claim.\n\nPlease enter your *policy number*\n_Eg: POL-121211_",
-      userMessage,
-    );
-  }
+    // Button "🚗 File a Claim" sends back id: "start"
+    if (msg === "start") {
+      return this.next(
+        state,
+        ClaimStep.AWAITING_POLICY_NUMBER,
+        {},
+        "Let's begin filing your claim.\n\nPlease enter your *policy number*\n_Eg: POL-121211_",
+        userMessage,
+      );
+    }
 
-  // Button "❓ Ask Question" sends back id: "question"
-  if (msg === "question") {
+    // Button "❓ Ask Question" sends back id: "question"
+    if (msg === "question") {
+      return {
+        newState: state,
+        response:
+          "Please type your question and our support team will assist you shortly. 🙏",
+      };
+    }
+
+    // Any greeting or anything else — show the welcome buttons
     return {
-      newState: state,
-      response: "Please type your question and our support team will assist you shortly. 🙏",
+      newState: { ...state, currentStep: ClaimStep.START },
+      response: "👋 Welcome to *DAICA Claims*!\n\nHow can we help you today?",
+      buttons: [
+        { title: "🚗 File a Claim", id: "start" },
+        { title: "❓ Ask Question", id: "question" },
+      ],
     };
   }
-
-  // Any greeting or anything else — show the welcome buttons
-  return {
-    newState: { ...state, currentStep: ClaimStep.START },
-    response: "👋 Welcome to *DAICA Claims*!\n\nHow can we help you today?",
-    buttons: [
-      { title: "🚗 File a Claim", id: "start" },
-      { title: "❓ Ask Question", id: "question" },
-    ],
-  };
-}
 
   private async handlePolicyNumber(
     state: ConversationState,
@@ -374,8 +378,8 @@ private async handleStart(state: ConversationState, userMessage: string): Promis
       userMessage,
       [
         { title: "🙋 My driver/Myself", id: "1" },
-        { title: "👤 Another person", id:"2" },
-        { title: "⚖️ Both parties", id:"3" },
+        { title: "👤 Another person", id: "2" },
+        { title: "⚖️ Both parties", id: "3" },
       ],
     );
   }
@@ -617,7 +621,10 @@ private async handleStart(state: ConversationState, userMessage: string): Promis
       { otherVehicleInsurerDetails: cleaned },
       "Did the *Police witness* the accident?",
       userMessage,
-      [{ title: "✅ Yes", id: "1" }, { title: "❌ No", id: "2" }],
+      [
+        { title: "✅ Yes", id: "1" },
+        { title: "❌ No", id: "2" },
+      ],
     );
   }
 
@@ -639,7 +646,10 @@ private async handleStart(state: ConversationState, userMessage: string): Promis
       { policeWitnessed },
       "Did the police *take any evidence or particulars*?",
       userMessage,
-      [{ title: "✅ Yes", id: "1" }, { title: "❌ No", id: "2" }],
+      [
+        { title: "✅ Yes", id: "1" },
+        { title: "❌ No", id: "2" },
+      ],
     );
   }
 
@@ -651,7 +661,7 @@ private async handleStart(state: ConversationState, userMessage: string): Promis
     if (!["1", "2"].includes(val)) {
       return this.invalid(state, "⚠️ Please select one of the options below.", [
         { title: "✅ Yes", id: "1" },
-        { title: "❌ No", id:"2" },
+        { title: "❌ No", id: "2" },
       ]);
     }
     const policeTookParticulars = val === "✅ yes";
@@ -749,7 +759,6 @@ private async handleStart(state: ConversationState, userMessage: string): Promis
     userMessage: string,
     images?: any,
   ): Promise<StepResult> {
-
     if (!images || images.length === 0) {
       return this.invalid(
         state,
@@ -761,7 +770,7 @@ private async handleStart(state: ConversationState, userMessage: string): Promis
     const newImages = [...currentImages, ...images];
     const uploadedUrls =
       await MediaService.uploadWhatsAppImagesToCloudinary(newImages);
-      const uploadedImg = await this.cloudMediaService.uploadImages(uploadedUrls)
+    const uploadedImg = await this.cloudMediaService.uploadImages(uploadedUrls);
     const newState: ConversationState = {
       ...state,
       data: { ...state.data, images: uploadedImg },

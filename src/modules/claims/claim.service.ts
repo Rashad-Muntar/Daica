@@ -13,7 +13,7 @@ export class ClaimService {
 
   async createClaim(data: IClaim) {
     if (!data.images) throw new Error("Images are required");
-    if (!data.status)  throw new Error("Status is required");
+    if (!data.status) throw new Error("Status is required");
 
     const claim = new Claim(
       data.user_id,

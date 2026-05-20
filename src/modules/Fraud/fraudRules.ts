@@ -65,7 +65,9 @@ export class FraudRules {
     // Police involved but no officer details
     if (claim.policeWitnessed && !claim.policeOfficerName) {
       score += 15;
-      reasons.push("Police said to have witnessed but no officer details given");
+      reasons.push(
+        "Police said to have witnessed but no officer details given",
+      );
     }
 
     // No witnesses at all

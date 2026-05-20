@@ -2,7 +2,10 @@ import { Claim } from "../claims/claim.entity";
 import { FraudAnalysis } from "../fraud/fraudAnalysis.entity";
 
 export class AIPromptBuilder {
-  static buildClaimAssessmentPrompt(claim: Claim, fraud: FraudAnalysis): string {
+  static buildClaimAssessmentPrompt(
+    claim: Claim,
+    fraud: FraudAnalysis,
+  ): string {
     return `
 You are an insurance claims assessment assistant in Ghana with the expertice of analysing and detecting insurance claims fraud.
 

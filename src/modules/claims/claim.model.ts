@@ -45,12 +45,12 @@ export interface ClaimDocument extends Document {
 
 const ClaimSchema = new Schema<ClaimDocument>(
   {
-    user_id:      { type: String, required: true },
+    user_id: { type: String, required: true },
     policyNumber: { type: String, required: true },
-    accidentDate: { type: Date,   required: true },
+    accidentDate: { type: Date, required: true },
     accidentTime: { type: String, required: false },
-    location:     { type: String, required: true },
-    images:       { type: [String], default: [] },
+    location: { type: String, required: true },
+    images: { type: [String], default: [] },
     status: {
       type: String,
       enum: ["PENDING", "UNDER_REVIEW", "APPROVED", "REJECTED", "FLAGGED"],
@@ -58,32 +58,32 @@ const ClaimSchema = new Schema<ClaimDocument>(
     },
 
     // Blame
-    driverToBlame:      { type: Boolean, default: false },
+    driverToBlame: { type: Boolean, default: false },
     otherPersonToBlame: { type: Boolean, default: false },
-    otherPersonDetails: { type: String,  required: false },
+    otherPersonDetails: { type: String, required: false },
 
     // Accident
     accidentDescription: { type: String, required: false },
-    lightsOnAtNight:     { type: String, required: false },
+    lightsOnAtNight: { type: String, required: false },
 
     // Vehicle damage
     vehicleDamageDescription: { type: String, required: false },
-    vehicleLocation:          { type: String, required: false },
-    nearestRepairer:          { type: String, required: false },
-    estimatedRepairCost:      { type: Number, default: 0 },
-    injuredPersonDetails:     { type: String, required: false },
+    vehicleLocation: { type: String, required: false },
+    nearestRepairer: { type: String, required: false },
+    estimatedRepairCost: { type: Number, default: 0 },
+    injuredPersonDetails: { type: String, required: false },
 
     // Other vehicle
-    otherVehicleRegNumber:    { type: String, required: false },
-    otherVehicleMake:         { type: String, required: false },
+    otherVehicleRegNumber: { type: String, required: false },
+    otherVehicleMake: { type: String, required: false },
     otherVehicleOwnerAddress: { type: String, required: false },
     otherVehicleInsurerDetails: { type: String, required: false },
 
     // Police
-    policeWitnessed:        { type: Boolean, default: false },
-    policeTookParticulars:  { type: Boolean, default: false },
-    policeOfficerName:      { type: String,  required: false },
-    policeStation:          { type: String,  required: false },
+    policeWitnessed: { type: Boolean, default: false },
+    policeTookParticulars: { type: Boolean, default: false },
+    policeOfficerName: { type: String, required: false },
+    policeStation: { type: String, required: false },
 
     // Witnesses
     witness1: { type: String, required: false },

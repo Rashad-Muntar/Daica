@@ -37,8 +37,6 @@ export class WhatssapClient {
     await this.messageParser.sendLocationRequest(recipientPhone, bodyText);
   }
 
-
-
   async sendRadioButtons(
     recipient: string,
     newText: string,
