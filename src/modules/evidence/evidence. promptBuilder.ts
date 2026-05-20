@@ -1,5 +1,5 @@
 export class EvidencePromptBuilder {
-  static buildEvidenceAssessmentPrompt(images:string[]): string {
+  static buildEvidenceAssessmentPrompt(images: string[]): string {
     return `
 You are an insurance vehicle damage analyst.
 

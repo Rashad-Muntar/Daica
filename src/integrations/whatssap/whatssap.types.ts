@@ -26,6 +26,7 @@ export interface ISendMessage {
   listModel?: Record<string, unknown>;
   mediaName?: string;
   mediaPlaceHolder?: string;
+  location?: ILocation
 }
 
 export interface IWarehouse {
@@ -33,3 +34,16 @@ export interface IWarehouse {
   longitude: number;
   address: string;
 }
+
+export interface IButton {
+  title: string;
+  id: string
+}
+
+export interface ILocation {
+  latitude: number;
+  longitude: number;
+  address?: string;
+  name?: string;
+}
+

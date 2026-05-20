@@ -11,11 +11,10 @@ export class ClaimOrchestrator {
   ) {}
 
   async handleClaimSubmission(claim: Claim) {
-    // console.log(claim)
     const fraud = await this.fraudService.analyzeClaim(claim);
     const aiResult = await this.aiService.assessClaim(claim, fraud);
     const decision = this.decisionEngine.evaluate(claim, fraud, aiResult);
-    console.log(decision);
+
     return decision;
   }
 }

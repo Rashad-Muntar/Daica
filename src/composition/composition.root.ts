@@ -7,8 +7,8 @@ import { FraudRepository } from "@/modules/fraud/fraud.repository";
 import { DecisionEngine } from "@/modules/decision/DecisionEngine";
 
 import { ConversationStateService } from "@/modules/conversation/conversation.service";
-import { ConversationOrchestrator } from "@/modules/orchestration/conversationOrchestrator";
-import { ConversationStepHandler } from "@/modules/orchestration/conversationStep.handler";
+import { ConversationOrchestrator } from "@/modules/orchestration/conversation.orchestrator";
+import { ConversationStepHandler } from "@/modules/orchestration/conversationStep.orchestrator";
 import { WhatssapClient } from "@/integrations/whatssap/whatssapClient";
 import { WhatssapService } from "@/integrations/whatssap/whatsapp.service";
 import { EventBus } from "@/modules/events/eventBus";
@@ -25,6 +25,8 @@ import { AuditRepository } from "@/modules/audit/audit.repository";
 import { EvidenceHandler } from "@/modules/evidence/evidence.handler";
 import { EvidenceService } from "@/modules/evidence/evidence.service";
 import { EvidenceClient } from "@/modules/evidence/evidence.client";
+import { CloudinaryService } from "@/integrations/cloudinary/cloudinary.service";
+import { CloudinaryClient } from "@/integrations/cloudinary/cloudinaty.client";
 
 /**
  * SINGLE RESPONSIBILITY:
@@ -48,24 +50,27 @@ export function buildAppContainer() {
   const aiClient = new AIClient();
   const aiService = new AIService(aiClient);
   const auditService = new AuditService(auditRepository);
-
+  const cloudinryClient = new CloudinaryClient();
+  const cloudinaryService = new CloudinaryService(cloudinryClient);
   // ========================
   // ORCHESTRATOR
   // ========================
 
   const messageParser = new WhatsAppMessageParser();
   const whatsappClient = new WhatssapClient(messageParser);
-  const evidenceClient = new EvidenceClient()
+  const evidenceClient = new EvidenceClient();
   const conversationHandler = new ConversationStepHandler(
     claimService,
     sessionService,
+    cloudinaryService,
   );
 
-  const evidenceService = new EvidenceService(evidenceClient)
+  const evidenceService = new EvidenceService(evidenceClient);
 
   const conversationOrchestrator = new ConversationOrchestrator(
-    conversationHandler,
     sessionService,
+    conversationHandler,
+    whatsappClient,
   );
 
   // ========================
@@ -74,7 +79,7 @@ export function buildAppContainer() {
 
   const whatsappService = new WhatssapService(
     conversationOrchestrator,
-    whatsappClient,
+    // whatsappClient,
   );
 
   // ====================
@@ -89,14 +94,14 @@ export function buildAppContainer() {
   const decisionHandler = new DecisionHandler(eventBus, decisionEngine);
   const notificationHandler = new NotificationHandler(eventBus, whatsappClient);
   const auditHandler = new AuditHandler(eventBus, auditService);
-  const evidenceHandler = new EvidenceHandler(eventBus, evidenceService)
-  
+  const evidenceHandler = new EvidenceHandler(eventBus, evidenceService);
+
   fraudHandler.register();
   aiHandler.register();
   decisionHandler.register();
   notificationHandler.register();
   auditHandler.register();
-  evidenceHandler.register()
+  evidenceHandler.register();
 
   return {
     whatsappService,

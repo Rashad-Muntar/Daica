@@ -7,9 +7,9 @@ export class AIResponseParser {
     let parsed: unknown;
 
     try {
-      console.log("DATA PARSED", raw);
+
       parsed = JSON.parse(raw);
-      console.log("DATA PARSED", parsed);
+
     } catch {
       throw new Error("AI returned invalid JSON");
     }

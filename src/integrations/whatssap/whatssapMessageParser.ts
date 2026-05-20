@@ -1,6 +1,7 @@
-import type { ISendMessage } from "./whatssap.types";
+import type { IButton } from "./whatssap.types";
 //@ts-expect-error This does not have available type
 import WhatsappCloudAPI from "whatsappcloudapi_wrapper";
+import axios from "axios";
 import { config } from "@/config/app.config";
 import type { IWarehouse } from "./whatssap.types";
 const Whatsapp = new WhatsappCloudAPI({
@@ -10,21 +11,42 @@ const Whatsapp = new WhatsappCloudAPI({
 });
 
 export class WhatsAppMessageParser {
-  // whatssapMessageParser.ts
-  static parse(payload: unknown): ISendMessage | null {
-    const message = Whatsapp.parseMessage(payload);
 
-    // Status updates & other events have no message body — skip them
-    if (!message?.message?.type) return null;
+static parse(payload: unknown) {
+  const message = Whatsapp.parseMessage(payload);
 
-    return {
-      recipient: message.message.from,
-      messageBody: message.message,
-      messageKey: message.message.message_id,
-      mediaurl: message.message.images,
-      msgType: message.message.type,
-    };
-  }
+  // Button replies have no message.type but have button_reply
+  const isButtonReply = message?.message?.button_reply?.id;
+  const msgType = message?.message?.type ?? (isButtonReply ? "simple_button_message" : null);
+
+  if (!msgType) return null;
+
+  // Extract body — for button replies use the button id
+  const textBody = isButtonReply
+    ? message.message.button_reply.id        // ← "start", "question" etc
+    : message?.message?.text?.body;
+  
+  const images: string[] = message?.message?.image?.url
+    ? [message.message.image.url]
+    : [];
+
+  return {
+    recipient: message.message.from,
+    messageBody: {
+      ...message.message,
+      text: { body: textBody },              // ← normalize into text.body
+    },
+    messageKey: message.message.message_id,
+    mediaurl: images.length > 0 ? images : undefined,
+    msgType,
+    location: message.message.type === "location_message" ? {
+      latitude: message.message.location?.latitude,
+      longitude: message.message.location?.longitude,
+      address: message.message.location?.address,
+      name: message.message.location?.name,
+    } : undefined,
+  };
+}
 
   async sendText(recipientPhone: string, message: string) {
     await Whatsapp.sendText({
@@ -44,7 +66,7 @@ export class WhatsAppMessageParser {
   async sendSimpleButtons(
     recipientPhone: string,
     message: string,
-    buttonlist: [],
+    buttonlist: IButton[],
   ) {
     await Whatsapp.sendSimpleButtons({
       recipientPhone: recipientPhone,
@@ -79,6 +101,33 @@ export class WhatsAppMessageParser {
       name: process.env.BOT_NAME,
     });
   }
+
+  async sendLocationRequest(recipientPhone: string, bodyText: string): Promise<void> {
+  await axios.post(
+    `https://graph.facebook.com/v25.0/${config.WaSenderPhoneNumberId}/messages`,
+    {
+      messaging_product: "whatsapp",
+      recipient_type: "individual",
+      type: "interactive",
+      to: recipientPhone,
+      interactive: {
+        type: "location_request_message",
+        body: {
+          text: bodyText,
+        },
+        action: {
+          name: "send_location",
+        },
+      },
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${config.WaAccessToken}`,
+      },
+    },
+  );
+}
 
   async sendMediaDocument(
     recipientPhone: string,

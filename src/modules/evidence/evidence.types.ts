@@ -3,7 +3,7 @@ export interface EvidenceResult {
   damageArea: "FRONT" | "REAR" | "LEFT" | "RIGHT" | "MULTIPLE" | "UNKNOWN";
   severity: "LOW" | "MEDIUM" | "HIGH";
   confidence: number;
-  imagesAnalyzed: 0,
+  imagesAnalyzed: 0;
   visibleIndicators: string[];
   suspiciousFlags: string[];
   summary: string;

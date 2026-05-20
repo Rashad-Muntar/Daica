@@ -21,6 +21,9 @@ const envSchema = z.object({
   META_WA_ACCESSTOKEN: z.string(),
   META_WA_WABAID: z.string(),
   GROQ_API_KEY: z.string(),
+  CLOUDINARY_CLOUD_NAME: z.string(),
+  CLOUDINARY_API_KEY: z.string(),
+  CLOUDINARY_API_SECRET: z.string()
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -51,4 +54,7 @@ export const config = {
   WaWabaId: env.META_WA_WABAID,
   databaseUrl: env.DATABASE_URI,
   AIApiKey: env.GROQ_API_KEY,
+  cloudinaryName: env.CLOUDINARY_CLOUD_NAME,
+  cloudinaryKey: env.CLOUDINARY_API_KEY,
+  cloudinarySecret: env.CLOUDINARY_API_SECRET
 } as const;

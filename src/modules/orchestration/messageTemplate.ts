@@ -30,7 +30,6 @@ export class Messages {
         updatedAt: new Date(),
       };
     };
-    console.log(newState);
     return { newState, response: { current, next, onAnswered } };
   }
 

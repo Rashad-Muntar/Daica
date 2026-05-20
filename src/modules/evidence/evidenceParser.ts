@@ -9,9 +9,8 @@ export class EvidenceParser {
 
       json = JSON.parse(cleaned);
     } catch (err) {
-      // fallback safe output
-      console.log(err)
-      return this.fallback();
+console.log(err)
+this.fallback();
     }
 
     return this.normalize(json);
@@ -53,7 +52,7 @@ export class EvidenceParser {
       suspiciousFlags: Array.isArray(data.suspiciousFlags)
         ? data.suspiciousFlags
         : [],
-      imagesAnalyzed: data.imagesAnalyzed,
+      imagesAnalyzed: dataimagesAnalyzedd,
       summary: typeof data.summary === "string" ? data.summary : "",
     };
   }

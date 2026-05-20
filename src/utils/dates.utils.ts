@@ -6,4 +6,10 @@ const isMoreThan10DaysAgo = (dateString: Date): boolean => {
   return diffDays > 10;
 };
 
-export { isMoreThan10DaysAgo };
+function convertDayMonthToMonthDay(dateStr: string): string {
+  const [day, month, year] = dateStr.split("/");
+
+  return `${month?.padStart(2, "0")}/${day?.padStart(2, "0")}/${year}`;
+}
+
+export { isMoreThan10DaysAgo, convertDayMonthToMonthDay };

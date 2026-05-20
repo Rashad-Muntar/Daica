@@ -1,4 +1,5 @@
 // import type { ISendMessage } from "./whatssap.types";
+import type { IButton } from "./whatssap.types";
 import type { WhatsAppMessageParser } from "./whatssapMessageParser";
 
 export class WhatssapClient {
@@ -20,7 +21,7 @@ export class WhatssapClient {
   async sendSimpleButtons(
     recipient: string,
     newText: string,
-    listModel: { listOfButtons: [] },
+    listModel: { listOfButtons: IButton[] },
   ): Promise<void> {
     await this.messageParser.sendSimpleButtons(
       recipient,
@@ -28,6 +29,15 @@ export class WhatssapClient {
       listModel.listOfButtons,
     );
   }
+
+  async sendLocationRequest(
+    recipientPhone: string,
+    bodyText: string,
+  ): Promise<void> {
+    await this.messageParser.sendLocationRequest(recipientPhone, bodyText);
+  }
+
+
 
   async sendRadioButtons(
     recipient: string,

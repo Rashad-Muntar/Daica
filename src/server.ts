@@ -81,10 +81,8 @@ async function bootstrap() {
   const shutdown = async (signal: string) => {
     logger.info(`Received ${signal}, shutting down gracefully...`);
     server.close(async () => {
-      // const { disconnectMongoDB } = await import('./db/mongoose');
       await disconnectMongoDB();
-      // const { redis } = await import('./utils/redis');
-      // await redis.quit();
+
       logger.info("Server closed");
       process.exit(0);
     });
