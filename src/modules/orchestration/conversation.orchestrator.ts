@@ -29,29 +29,7 @@ export class ConversationOrchestrator {
     }
 
     await this.sessionService.save(message.recipient.phone, newState);
-    // {
-    //   recipient: { name: 'Rashad', phone: '233246949634' },
-    //   messageBody: {
-    //     from: { name: 'Rashad', phone: '233246949634' },
-    //     from_user_id: 'GH.1203947121643644',
-    //     timestamp: '1779289728',
-    //     type: 'media_message',
-    //     image: {
-    //       mime_type: 'image/jpeg',
-    //       sha256: 'OuvHuRvti0Hg9m1iyVjr+W9P7Z7R7YFr5oWKFlGIvGk=',
-    //       id: '26524828817187683',
-    //       url: 'https://lookaside.fbsbx.com/whatsapp_business/attachments/?mid=26524828817187683&source=webhook&ext=1779290030&hash=ARlFqVtCpGX3PihaUd_TFPYZ6h8FpfL6d-xXQUE2dM-4uA'
-    //     },
-    //     thread: null,
-    //     message_id: 'wamid.HBgMMjMzMjQ2OTQ5NjM0FQIAEhgWM0VCMEQ4NjA5NDkyQUYxNjk5MEM3NgA=',
-    //     text: { body: undefined }
-    //   },
-    //   messageKey: 'wamid.HBgMMjMzMjQ2OTQ5NjM0FQIAEhgWM0VCMEQ4NjA5NDkyQUYxNjk5MEM3NgA=',
-    //   mediaurl: undefined,
-    //   msgType: 'media_message',
-    //   location: undefined
-    // }
-    // ← is this block present?
+  
     if (locationRequest) {
       await this.client.sendLocationRequest(message.recipient.phone, response);
     } else if (buttons && buttons.length > 0) {

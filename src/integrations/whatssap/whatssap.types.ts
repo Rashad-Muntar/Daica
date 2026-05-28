@@ -10,11 +10,6 @@ export interface IRecipient {
   phone: string;
 }
 
-// interface ISendMessage<T = string> {
-//   recipient: string;
-//   messageBody: T;
-//   // ...
-// }
 
 export interface ISendMessage {
   recipient: IRecipient;
