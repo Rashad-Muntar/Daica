@@ -22,7 +22,7 @@ export class ConversationStateService {
       return {
         userId,
         currentStep: ClaimStep.START,
-        nextStep: ClaimStep.AWAITING_NUMBER,
+        nextStep: ClaimStep.AWAITING_POLICY_NUMBER,
         lastMessage: "",
         updatedAt: new Date(),
         goBack: "",

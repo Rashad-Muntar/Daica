@@ -53,8 +53,6 @@ export class ConversationStepHandler {
         return this.handleRepairer(state, userMessage);
       case ClaimStep.AWAITING_REPAIR_COST:
         return this.handleRepairCost(state, userMessage);
-      case ClaimStep.AWAITING_INJURED_DETAILS:
-        return this.handleInjuredDetails(state, userMessage);
       case ClaimStep.AWAITING_OTHER_VEHICLE_REG:
         return this.handleOtherVehicleReg(state, userMessage);
       case ClaimStep.AWAITING_OTHER_VEHICLE_MAKE:
@@ -79,6 +77,24 @@ export class ConversationStepHandler {
         return this.handleImages(state, userMessage, images);
       case ClaimStep.COMPLETE:
         return this.handleComplete(state);
+      case ClaimStep.AWAITING_REPAIR_INVOICE:
+        return this.handleRepairInvoice(state, userMessage, images);
+      case ClaimStep.AWAITING_INJURED_DETAILS:
+        return this.handleInjuredDetails(state, userMessage);
+      case ClaimStep.AWAITING_INJURED_PERSON_NAME:
+        return this.handleInjuredPersonName(state, userMessage);
+      case ClaimStep.AWAITING_INJURED_PERSON_PHONE:
+        return this.handleInjuredPersonPhone(state, userMessage);
+      case ClaimStep.AWAITING_INJURED_PERSON_SEVERITY:
+        return this.handleInjuredPersonSeverity(state, userMessage);
+      case ClaimStep.AWAITING_MORE_INJURED:
+        return this.handleMoreInjured(state, userMessage);
+      case ClaimStep.AWAITING_DOCTOR_REPORT:
+        return this.handleDoctorReport(state, userMessage, images);
+      case ClaimStep.AWAITING_POLICE_REPORT:
+        return this.handlePoliceReport(state, userMessage, images);
+      case ClaimStep.AWAITING_GHANA_CARD:
+        return this.handleGhanaCard(state, userMessage, images);
 
       default:
         return {
@@ -141,87 +157,6 @@ export class ConversationStepHandler {
       date <= new Date() // can't be in the future
     );
   }
-
-  // ─── Handlers ───────────────────────────────────────────────────────────────
-
-  // private async handleStart(
-  //   state: ConversationState,
-  //   userMessage: string,
-  // ): Promise<StepResult> {
-  //   if (["hi", "hello", "hey"].includes(userMessage.toLowerCase().trim())) {
-  //     return this.next(
-  //       state,
-  //       ClaimStep.START,
-  //       {},
-  //       "👋 Welcome to DAICA Claims! Please type *start* to begin.",
-  //       userMessage,
-  //     );
-  //   }
-  //   if (["start"].includes(userMessage.toLowerCase().trim())) {
-  //     return this.next(
-  //       state,
-  //       ClaimStep.AWAITING_POLICY_NUMBER,
-  //       {},
-  //       "🚗\n\nLet's begin filing your claim.\n\nPlease enter your *vehicle registration number*\n_Eg: GR 123-24_",
-  //       userMessage,
-  //     );
-  //   }
-  //   return this.invalid(
-  //     state,
-  //     "👋 Welcome to DAICA Claims! Please type *start* to begin.",
-  //   );
-  // }
-
-  //   private async handleStart(state: ConversationState, userMessage: string): Promise<StepResult> {
-  //   if (["hi", "hello", "hey"].includes(userMessage.toLowerCase().trim())) {
-  //     return {
-  //       newState: { ...state, currentStep: ClaimStep.START },
-  //       response: "👋 Welcome to *DAICA Claims*!\n\nHow can we help you today?",
-  //       buttons: [
-  //         { title: "🚗 File a Claim", id: "start" },
-  //         { title: "❓ Ask Question", id: "question" },
-  //       ],
-  //     };
-  //   }
-
-  //   if (userMessage.toLowerCase().trim() === "start") {
-  //     return this.next(
-  //       state,
-  //       ClaimStep.AWAITING_POLICY_NUMBER,
-  //       {},
-  //       "Let's begin filing your claim.\n\nPlease enter your *policy number*\n_Eg: POL-121211_",
-  //       userMessage,
-  //     );
-  //   }
-
-  //   if (userMessage.toLowerCase().trim() === "question") {
-  //     return {
-  //       newState: state,
-  //       response: "Please type your question and our support team will assist you shortly. 🙏",
-  //     };
-  //   }
-
-  //   // Catch anyone who types "start" manually
-  //   if (userMessage.toLowerCase().trim() === "start") {
-  //     return {
-  //       newState: { ...state, currentStep: ClaimStep.START },
-  //       response: "👋 Welcome to *DAICA Claims*!\n\nHow can we help you today?",
-  //       buttons: [
-  //         { title: "🚗 File a Claim", id: "start" },
-  //         { title: "❓ Ask Question", id:"question" },
-  //       ],
-  //     };
-  //   }
-
-  //   return {
-  //     newState: state,
-  //     response: "👋 Welcome to *DAICA Claims*!\n\nHow can we help you today?",
-  //     buttons: [
-  //       { title: "🚗 File a Claim", id: "start" },
-  //       { title: "❓ Ask Question", id: "question" },
-  //     ],
-  //   };
-  // }
 
   private async handleStart(
     state: ConversationState,
@@ -315,11 +250,422 @@ export class ConversationStepHandler {
         "⚠️ Invalid time format. Please use *HH:MM* format\n_Eg: 14:30 or 2:30 PM_",
       );
     }
+    // return this.next(
+    //   state,
+    //   ClaimStep.AWAITING_LOCATION,
+    //   { accidentTime: userMessage.trim() },
+    //   "Where did the accident happen?\n\nPlease provide the location\n_Eg: Osu near Calvary Church, Accra_",
+    //   userMessage,
+    // );
+    // return {
+    //   newState: state,
+    //   response:
+    //     "📍 Please share the *location where the accident happened*.\n\nYou can share the location using the button below.",
+    //   locationRequest: true, // ← orchestrator will call sendLocationRequest
+    // };
+
+      return {
+    newState: {
+      ...state,
+      currentStep: ClaimStep.AWAITING_LOCATION, // ← advance step
+      data: { ...state.data, accidentTime: userMessage.trim() }, // ← save time
+      lastMessage: userMessage,
+      updatedAt: new Date(),
+    },
+    response:
+      "📍 Please share the *location where the accident happened*.\n\nYou can share the location using the button below.",
+    locationRequest: true,
+  };
+  }
+
+  private async handleRepairCost(
+    state: ConversationState,
+    userMessage: string,
+  ): Promise<StepResult> {
+    const cost = parseFloat(userMessage.replace(/,/g, "").trim());
+    if (isNaN(cost) || cost <= 0) {
+      return this.invalid(
+        state,
+        "⚠️ Please enter a valid repair cost in GHC\n_Eg: 5000_",
+      );
+    }
     return this.next(
       state,
-      ClaimStep.AWAITING_LOCATION,
-      { accidentTime: userMessage.trim() },
-      "Where did the accident happen?\n\nPlease provide the location\n_Eg: Osu near Calvary Church, Accra_",
+      ClaimStep.AWAITING_REPAIR_INVOICE,
+      { estimatedRepairCost: cost },
+      "Please upload your *vehicle repair estimate invoice*.\nType *skip* if you don't have one yet.",
+      userMessage,
+    );
+  }
+
+  private async handleRepairInvoice(
+    state: ConversationState,
+    userMessage: string,
+    images?: any,
+  ): Promise<StepResult> {
+    if (userMessage.toLowerCase().trim() === "skip") {
+      return this.next(
+        state,
+        ClaimStep.AWAITING_INJURED_DETAILS,
+        {},
+        "Were any persons injured?\n\nReply with:\n*1* - Yes\n*2* - No",
+        userMessage,
+        [
+          { title: "✅ Yes", id: "yes" },
+          { title: "❌ No", id: "no" },
+        ],
+      );
+    }
+
+    if (!images || images.length === 0) {
+      return this.invalid(
+        state,
+        "⚠️ Please upload your repair invoice image or type *skip* to continue without it.",
+      );
+    }
+
+    const uploaded =
+      await MediaService.uploadWhatsAppImagesToCloudinary(images);
+    const urls = await this.cloudMediaService.uploadImages(uploaded);
+    if (!urls || urls.length === 0 || !urls[0]) {
+      return this.invalid(
+        state,
+        "⚠️ Something went wrong uploading your Ghana card image. Please try again.",
+      );
+    }
+    return this.next(
+      state,
+      ClaimStep.AWAITING_INJURED_DETAILS,
+      { repairInvoiceUrl: urls[0] },
+      "Were any persons injured?\n\nReply with:\n*1* - Yes\n*2* - No",
+      userMessage,
+      [
+        { title: "✅ Yes", id: "yes" },
+        { title: "❌ No", id: "no" },
+      ],
+    );
+  }
+
+  private async handleInjuredDetails(
+    state: ConversationState,
+    userMessage: string,
+  ): Promise<StepResult> {
+    const val = userMessage.trim().toLowerCase();
+    if (!["yes", "no"].includes(val)) {
+      return this.invalid(state, "⚠️ Please select one of the options below.", [
+        { title: "✅ Yes", id: "yes" },
+        { title: "❌ No", id: "no" },
+      ]);
+    }
+
+    if (val === "no") {
+      return this.next(
+        state,
+        ClaimStep.AWAITING_OTHER_VEHICLE_REG,
+        {},
+        "Please provide the *registration number* of the other vehicle involved.\nType *none* if not applicable.",
+        userMessage,
+      );
+    }
+
+    return this.next(
+      state,
+      ClaimStep.AWAITING_INJURED_PERSON_NAME,
+      { injuredPersonDetails: [], currentInjuredPerson: {} },
+      "Please provide the *full name* of the injured person:",
+      userMessage,
+    );
+  }
+
+  private async handleInjuredPersonName(
+    state: ConversationState,
+    userMessage: string,
+  ): Promise<StepResult> {
+    const cleaned = userMessage.trim();
+    if (cleaned.length < 2) {
+      return this.invalid(
+        state,
+        "⚠️ Please provide the injured person's full name.",
+      );
+    }
+    return this.next(
+      state,
+      ClaimStep.AWAITING_INJURED_PERSON_PHONE,
+      {
+        currentInjuredPerson: {
+          ...state.data.currentInjuredPerson,
+          name: cleaned,
+        },
+      },
+      "Please provide their *phone number*:",
+      userMessage,
+    );
+  }
+
+  private async handleInjuredPersonPhone(
+    state: ConversationState,
+    userMessage: string,
+  ): Promise<StepResult> {
+    const cleaned = userMessage.trim();
+    if (!/^\d{10,}$/.test(cleaned.replace(/\s/g, ""))) {
+      return this.invalid(
+        state,
+        "⚠️ Please provide a valid phone number\n_Eg: 0241234455_",
+      );
+    }
+    return this.next(
+      state,
+      ClaimStep.AWAITING_INJURED_PERSON_SEVERITY,
+      {
+        currentInjuredPerson: {
+          ...state.data.currentInjuredPerson,
+          phoneNumber: cleaned,
+        },
+      },
+      "What is the *severity of their injuries*?\n\nReply with:\n*1* - Minor\n*2* - Moderate\n*3* - Severe",
+      userMessage,
+      [
+        { title: "🟡 Minor", id: "minor" },
+        { title: "🟠 Moderate", id: "moderate" },
+        { title: "🔴 Severe", id: "severe" },
+      ],
+    );
+  }
+
+  private async handleInjuredPersonSeverity(
+    state: ConversationState,
+    userMessage: string,
+  ): Promise<StepResult> {
+    const val = userMessage.trim().toLowerCase();
+    const severityMap: Record<string, string> = {
+      minor: "Minor",
+      moderate: "Moderate",
+      severe: "Severe",
+    };
+
+    if (!severityMap[val]) {
+      return this.invalid(state, "⚠️ Please select the severity level.", [
+        { title: "🟡 Minor", id: "minor" },
+        { title: "🟠 Moderate", id: "moderate" },
+        { title: "🔴 Severe", id: "severe" },
+      ]);
+    }
+
+    const completedPerson = {
+      name: state.data.currentInjuredPerson?.name ?? "",
+      phoneNumber: state.data.currentInjuredPerson?.phoneNumber ?? "",
+      severity: severityMap[val]!,
+    };
+
+    const updatedList = [
+      ...(state.data.injuredPersonDetails ?? []),
+      completedPerson,
+    ];
+
+    if (!updatedList || updatedList.length === 0) {
+      return this.invalid(
+        state,
+        "⚠️ Something went wrong saving the injured person's details. Please try again.",
+      );
+    }
+
+    return this.next(
+      state,
+      ClaimStep.AWAITING_MORE_INJURED,
+      { injuredPersonDetails: updatedList, currentInjuredPerson: {} },
+      `✅ Injured person added.\n\nAre there *more injured persons* to add?`,
+      userMessage,
+      [
+        { title: "➕ Add Another", id: "yes" },
+        { title: "✅ Done", id: "no" },
+      ],
+    );
+  }
+
+  private async handleMoreInjured(
+    state: ConversationState,
+    userMessage: string,
+  ): Promise<StepResult> {
+    const val = userMessage.trim().toLowerCase();
+
+    if (val === "yes") {
+      return this.next(
+        state,
+        ClaimStep.AWAITING_INJURED_PERSON_NAME,
+        { currentInjuredPerson: {} },
+        "Please provide the *full name* of the next injured person:",
+        userMessage,
+      );
+    }
+
+    // Done adding injured persons — ask for doctor's report
+    return this.next(
+      state,
+      ClaimStep.AWAITING_DOCTOR_REPORT,
+      {},
+      "Is there a *doctor's report* for the injured person(s)?\n\nPlease upload it if available, or type *skip* to continue.",
+      userMessage,
+    );
+  }
+
+  private async handleDoctorReport(
+    state: ConversationState,
+    userMessage: string,
+    images?: any,
+  ): Promise<StepResult> {
+    if (userMessage.toLowerCase().trim() === "skip") {
+      return this.next(
+        state,
+        ClaimStep.AWAITING_OTHER_VEHICLE_REG,
+        {},
+        "Please provide the *registration number* of the other vehicle involved.\nType *none* if not applicable.",
+        userMessage,
+      );
+    }
+
+    if (!images || images.length === 0) {
+      return this.invalid(
+        state,
+        "⚠️ Please upload the doctor's report image or type *skip* to continue without it.",
+      );
+    }
+
+    const uploaded =
+      await MediaService.uploadWhatsAppImagesToCloudinary(images);
+    const urls = await this.cloudMediaService.uploadImages(uploaded);
+    if (!urls || urls.length === 0 || !urls[0]) {
+      return this.invalid(
+        state,
+        "⚠️ Something went wrong uploading your Ghana card image. Please try again.",
+      );
+    }
+    return this.next(
+      state,
+      ClaimStep.AWAITING_OTHER_VEHICLE_REG,
+      { doctorReportUrl: urls[0] },
+      "Please provide the *registration number* of the other vehicle involved.\nType *none* if not applicable.",
+      userMessage,
+    );
+  }
+
+  private async handlePoliceStation(
+    state: ConversationState,
+    userMessage: string,
+  ): Promise<StepResult> {
+    const cleaned = userMessage.trim();
+    if (cleaned.length === 0) {
+      return this.invalid(
+        state,
+        "⚠️ Please provide the police station name or type *none*.",
+      );
+    }
+    return this.next(
+      state,
+      ClaimStep.AWAITING_POLICE_REPORT,
+      { policeStation: cleaned },
+      "Please upload your *police report* document.\nType *skip* if you don't have it yet.",
+      userMessage,
+    );
+  }
+
+  private async handlePoliceReport(
+    state: ConversationState,
+    userMessage: string,
+    images?: any,
+  ): Promise<StepResult> {
+    if (userMessage.toLowerCase().trim() === "skip") {
+      return this.next(
+        state,
+        ClaimStep.AWAITING_WITNESS1,
+        {},
+        "Please provide the name and contact of *Witness 1*.\nType *none* if there are no witnesses.",
+        userMessage,
+      );
+    }
+
+    if (!images || images.length === 0) {
+      return this.invalid(
+        state,
+        "⚠️ Please upload your police report image or type *skip* to continue without it.",
+      );
+    }
+
+    const uploaded =
+      await MediaService.uploadWhatsAppImagesToCloudinary(images);
+    const urls = await this.cloudMediaService.uploadImages(uploaded);
+    if (!urls || urls.length === 0 || !urls[0]) {
+      return this.invalid(
+        state,
+        "⚠️ Something went wrong uploading your Ghana card image. Please try again.",
+      );
+    }
+    return this.next(
+      state,
+      ClaimStep.AWAITING_WITNESS1,
+      { policeReportUrl: urls[0] },
+      "Please provide the name and contact of *Witness 1*.\nType *none* if there are no witnesses.",
+      userMessage,
+    );
+  }
+
+  private async handleGhanaCard(
+    state: ConversationState,
+    userMessage: string,
+    images?: any,
+  ): Promise<StepResult> {
+    if (userMessage.toLowerCase().trim() === "skip") {
+      return this.next(
+        state,
+        ClaimStep.AWAITING_IMAGES,
+        {},
+        "Almost done! 📸\n\nPlease send *photos of the vehicle damage*.\nYou can send multiple images.",
+        userMessage,
+      );
+    }
+
+    if (!images || images.length === 0) {
+      return this.invalid(
+        state,
+        "⚠️ Please upload your Ghana card image or type *skip* to continue without it.",
+      );
+    }
+
+    const uploaded =
+      await MediaService.uploadWhatsAppImagesToCloudinary(images);
+    const urls = await this.cloudMediaService.uploadImages(uploaded);
+
+    if (!urls || urls.length === 0 || !urls[0]) {
+      return this.invalid(
+        state,
+        "⚠️ Something went wrong uploading your Ghana card image. Please try again.",
+      );
+    }
+
+    return this.next(
+      state,
+      ClaimStep.AWAITING_IMAGES,
+      { ghanaCardUrl: urls[0] },
+      "Almost done! 📸\n\nPlease send *photos of the vehicle damage*.\nYou can send multiple images.",
+      userMessage,
+    );
+  }
+
+  private async handleWitness2(
+    state: ConversationState,
+    userMessage: string,
+  ): Promise<StepResult> {
+    const cleaned = userMessage.trim();
+    if (cleaned.length === 0) {
+      return this.invalid(
+        state,
+        "⚠️ Please provide witness details or type *none*.",
+      );
+    }
+    return this.next(
+      state,
+      ClaimStep.AWAITING_GHANA_CARD,
+      { witness2: cleaned },
+      "Please upload a photo of your *Ghana Card* for identity verification.\nType *skip* if not available.",
       userMessage,
     );
   }
@@ -334,7 +680,7 @@ export class ConversationStepHandler {
       return {
         newState: state,
         response:
-          "📍 Please share the *location where the accident happened*.\n\nYou can either manually enter an address or share your location using the button below.",
+          "📍 Please share the *location where the accident happened*.\n\nYou can share the location using the button below.",
         locationRequest: true, // ← orchestrator will call sendLocationRequest
       };
     }
@@ -479,7 +825,7 @@ export class ConversationStepHandler {
       state,
       ClaimStep.AWAITING_REPAIRER,
       { vehicleLocation: cleaned },
-      "What is the *name and address of the nearest repairer*?",
+      "What is the *name and location of the nearest repairer*?",
       userMessage,
     );
   }
@@ -492,7 +838,7 @@ export class ConversationStepHandler {
     if (cleaned.length < 3) {
       return this.invalid(
         state,
-        "⚠️ Please provide the name and address of the nearest repairer.",
+        "⚠️ Please provide the name and location of the nearest repairer.",
       );
     }
     return this.next(
@@ -500,46 +846,6 @@ export class ConversationStepHandler {
       ClaimStep.AWAITING_REPAIR_COST,
       { nearestRepairer: cleaned },
       "What is the *estimated cost of repairs* in GHC?\n_Eg: 5000_",
-      userMessage,
-    );
-  }
-
-  private async handleRepairCost(
-    state: ConversationState,
-    userMessage: string,
-  ): Promise<StepResult> {
-    const cost = parseFloat(userMessage.replace(/,/g, "").trim());
-    if (isNaN(cost) || cost <= 0) {
-      return this.invalid(
-        state,
-        "⚠️ Please enter a valid repair cost in GHC\n_Eg: 5000_",
-      );
-    }
-    return this.next(
-      state,
-      ClaimStep.AWAITING_INJURED_DETAILS,
-      { estimatedRepairCost: cost },
-      "Were any persons injured?\n\nIf yes, provide their *name, address and extent of injuries*.\nType *none* if no one was injured.",
-      userMessage,
-    );
-  }
-
-  private async handleInjuredDetails(
-    state: ConversationState,
-    userMessage: string,
-  ): Promise<StepResult> {
-    const cleaned = userMessage.trim();
-    if (cleaned.length === 0) {
-      return this.invalid(
-        state,
-        "⚠️ Please provide injury details or type *none* if no one was injured.",
-      );
-    }
-    return this.next(
-      state,
-      ClaimStep.AWAITING_OTHER_VEHICLE_REG,
-      { injuredPersonDetails: cleaned },
-      "Please provide the *registration number and model* of the other vehicle involved.\nType *none* if not applicable.",
       userMessage,
     );
   }
@@ -553,6 +859,25 @@ export class ConversationStepHandler {
       return this.invalid(
         state,
         "⚠️ Please provide the other vehicle's registration number or type *none*.",
+      );
+    }
+    if(cleaned.toLocaleLowerCase() === "none") {
+      return this.next(
+        state,
+        ClaimStep.AWAITING_POLICE_WITNESSED,
+        { otherVehicleRegNumber: "None" },
+        "Did the *Police witness* the accident?",
+        userMessage,
+        [
+          { title: "✅ Yes", id: "1" },
+          { title: "❌ No", id: "2" },
+        ],
+      );
+    }
+    if (!this.isValidVehicleReg(cleaned)) {
+      return this.invalid(
+        state,
+        "⚠️ Invalid registration number format. Please provide a valid registration number\n_Eg: GR 123-24_",
       );
     }
     return this.next(
@@ -579,7 +904,7 @@ export class ConversationStepHandler {
       state,
       ClaimStep.AWAITING_OTHER_VEHICLE_OWNER,
       { otherVehicleMake: cleaned },
-      "Please provide the *name and address of the other vehicle's owner*.\nType *none* if not applicable.",
+      "Please provide the *name and phone number of the other vehicle's owner*.\nType *none* if not applicable.",
       userMessage,
     );
   }
@@ -599,7 +924,7 @@ export class ConversationStepHandler {
       state,
       ClaimStep.AWAITING_OTHER_VEHICLE_INSURER,
       { otherVehicleOwnerAddress: cleaned },
-      "Please provide the *name and address of the other vehicle's insurer*.\nType *none* if not applicable.",
+      "Please provide the *name of the other vehicle's insurer*.\nType *none* if not applicable.",
       userMessage,
     );
   }
@@ -694,26 +1019,6 @@ export class ConversationStepHandler {
     );
   }
 
-  private async handlePoliceStation(
-    state: ConversationState,
-    userMessage: string,
-  ): Promise<StepResult> {
-    const cleaned = userMessage.trim();
-    if (cleaned.length === 0) {
-      return this.invalid(
-        state,
-        "⚠️ Please provide the police station name or type *none*.",
-      );
-    }
-    return this.next(
-      state,
-      ClaimStep.AWAITING_WITNESS1,
-      { policeStation: cleaned },
-      "Please provide the name and contact of *Witness 1*.\nType *none* if there are no witnesses.",
-      userMessage,
-    );
-  }
-
   private async handleWitness1(
     state: ConversationState,
     userMessage: string,
@@ -730,26 +1035,6 @@ export class ConversationStepHandler {
       ClaimStep.AWAITING_WITNESS2,
       { witness1: cleaned },
       "Please provide the name and contact of *Witness 2*.\nType *none* if there is no second witness.",
-      userMessage,
-    );
-  }
-
-  private async handleWitness2(
-    state: ConversationState,
-    userMessage: string,
-  ): Promise<StepResult> {
-    const cleaned = userMessage.trim();
-    if (cleaned.length === 0) {
-      return this.invalid(
-        state,
-        "⚠️ Please provide witness details or type *none*.",
-      );
-    }
-    return this.next(
-      state,
-      ClaimStep.AWAITING_IMAGES,
-      { witness2: cleaned },
-      "Almost done! 📸\n\nPlease send *photos of the vehicle damage*.\nYou can send multiple images.",
       userMessage,
     );
   }
@@ -818,7 +1103,9 @@ export class ConversationStepHandler {
       vehicleLocation: d.vehicleLocation,
       nearestRepairer: d.nearestRepairer,
       estimatedRepairCost: d.estimatedRepairCost,
-      injuredPersonDetails: d.injuredPersonDetails,
+      repairInvoiceUrl: d.repairInvoiceUrl,
+      injuredPersonDetails: d.injuredPersonDetails ?? [],
+      doctorReportUrl: d.doctorReportUrl,
       otherVehicleRegNumber: d.otherVehicleRegNumber,
       otherVehicleMake: d.otherVehicleMake,
       otherVehicleOwnerAddress: d.otherVehicleOwnerAddress,
@@ -827,8 +1114,10 @@ export class ConversationStepHandler {
       policeTookParticulars: d.policeTookParticulars,
       policeOfficerName: d.policeOfficerName,
       policeStation: d.policeStation,
+      policeReportUrl: d.policeReportUrl,
       witness1: d.witness1,
       witness2: d.witness2,
+      ghanaCardUrl: d.ghanaCardUrl,
     });
 
     await this.sessionService.clear(state.userId);

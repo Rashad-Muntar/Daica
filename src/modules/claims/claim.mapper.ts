@@ -20,7 +20,9 @@ export class ClaimMapper {
       document.vehicleLocation,
       document.nearestRepairer,
       document.estimatedRepairCost,
+      document.repairInvoiceUrl,
       document.injuredPersonDetails,
+      document.doctorReportUrl,
       document.otherVehicleRegNumber,
       document.otherVehicleMake,
       document.otherVehicleOwnerAddress,
@@ -29,8 +31,10 @@ export class ClaimMapper {
       document.policeTookParticulars,
       document.policeOfficerName,
       document.policeStation,
+      document.policeReportUrl,
       document.witness1,
       document.witness2,
+      document.ghanaCardUrl ?? "",
     );
   }
 }

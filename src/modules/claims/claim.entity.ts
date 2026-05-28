@@ -1,3 +1,5 @@
+import type { InjuredPersonDetails } from "./claim.type";
+
 export class Claim {
   constructor(
     public user_id: string,
@@ -7,38 +9,30 @@ export class Claim {
     public accidentTime: string,
     public images: string[],
     public status: string,
-
-    // Blame
-    public driverToBlame: boolean,
-    public otherPersonToBlame: boolean,
-    public otherPersonDetails: string,
-
-    // Accident
-    public accidentDescription: string,
-    public lightsOnAtNight: string,
-
-    // Vehicle damage
-    public vehicleDamageDescription: string,
-    public vehicleLocation: string,
-    public nearestRepairer: string,
-    public estimatedRepairCost: number,
-    public injuredPersonDetails: string,
-
-    // Other vehicle
-    public otherVehicleRegNumber: string,
-    public otherVehicleMake: string,
-    public otherVehicleOwnerAddress: string,
-    public otherVehicleInsurerDetails: string,
-
-    // Police
-    public policeWitnessed: boolean,
-    public policeTookParticulars: boolean,
-    public policeOfficerName: string,
-    public policeStation: string,
-
-    // Witnesses
-    public witness1: string,
-    public witness2: string,
+    public driverToBlame: boolean = false,
+    public otherPersonToBlame: boolean = false,
+    public otherPersonDetails: string = "",
+    public accidentDescription: string = "",
+    public lightsOnAtNight: string = "",
+    public vehicleDamageDescription: string = "",
+    public vehicleLocation: string = "",
+    public nearestRepairer: string = "",
+    public estimatedRepairCost: number = 0,
+    public repairInvoiceUrl: string = "",
+    public injuredPersonDetails: InjuredPersonDetails[] = [],
+    public doctorReportUrl: string = "",
+    public otherVehicleRegNumber: string = "",
+    public otherVehicleMake: string = "",
+    public otherVehicleOwnerAddress: string = "",
+    public otherVehicleInsurerDetails: string = "",
+    public policeWitnessed: boolean = false,
+    public policeTookParticulars: boolean = false,
+    public policeOfficerName: string = "",
+    public policeStation: string = "",
+    public policeReportUrl: string = "",
+    public witness1: string = "",
+    public witness2: string = "",
+    public ghanaCardUrl: string = "",
   ) {}
 
   updateStatus(status: ClaimStatus) {

@@ -12,8 +12,8 @@ export class ClaimService {
   ) {}
 
   async createClaim(data: IClaim) {
-    if (!data.images) throw new Error("Images are required");
-    if (!data.status) throw new Error("Status is required");
+    if (!data.images)  throw new Error("Images are required");
+    if (!data.status)  throw new Error("Status is required");
 
     const claim = new Claim(
       data.user_id,
@@ -32,7 +32,9 @@ export class ClaimService {
       data.vehicleLocation ?? "",
       data.nearestRepairer ?? "",
       data.estimatedRepairCost ?? 0,
-      data.injuredPersonDetails ?? "",
+      data.repairInvoiceUrl ?? "",
+      data.injuredPersonDetails ?? [],
+      data.doctorReportUrl ?? "",
       data.otherVehicleRegNumber ?? "",
       data.otherVehicleMake ?? "",
       data.otherVehicleOwnerAddress ?? "",
@@ -41,8 +43,10 @@ export class ClaimService {
       data.policeTookParticulars ?? false,
       data.policeOfficerName ?? "",
       data.policeStation ?? "",
+      data.policeReportUrl ?? "",
       data.witness1 ?? "",
       data.witness2 ?? "",
+      data.ghanaCardUrl ?? "",
     );
 
     if (!claim.isComplete()) {
@@ -50,7 +54,6 @@ export class ClaimService {
     }
 
     const savedClaim = await this.repo.create(claim);
-
     this.eventBus.publish({
       type: EventType.CLAIM_SUBMITTED,
       timestamp: new Date(),
