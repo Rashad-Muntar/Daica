@@ -6,12 +6,7 @@ import { ClaimStep } from "../conversation/conversation.types";
 import { MediaService } from "@/integrations/whatssap/media.handler";
 import type { ILocation } from "@/integrations/whatssap/whatssap.types";
 import type { CloudinaryService } from "@/integrations/cloudinary/cloudinary.service";
-type StepResult = {
-  newState: ConversationState | undefined;
-  response: string | undefined;
-  buttons?: { title: string; id: string }[] | undefined;
-  locationRequest?: boolean | undefined;
-};
+import type { StepResult } from "./orchestrator.types";
 
 export class ConversationStepHandler {
   constructor(
@@ -264,18 +259,18 @@ export class ConversationStepHandler {
     //   locationRequest: true, // ← orchestrator will call sendLocationRequest
     // };
 
-      return {
-    newState: {
-      ...state,
-      currentStep: ClaimStep.AWAITING_LOCATION, // ← advance step
-      data: { ...state.data, accidentTime: userMessage.trim() }, // ← save time
-      lastMessage: userMessage,
-      updatedAt: new Date(),
-    },
-    response:
-      "📍 Please share the *location where the accident happened*.\n\nYou can share the location using the button below.",
-    locationRequest: true,
-  };
+    return {
+      newState: {
+        ...state,
+        currentStep: ClaimStep.AWAITING_LOCATION, // ← advance step
+        data: { ...state.data, accidentTime: userMessage.trim() }, // ← save time
+        lastMessage: userMessage,
+        updatedAt: new Date(),
+      },
+      response:
+        "📍 Please share the *location where the accident happened*.\n\nYou can share the location using the button below.",
+      locationRequest: true,
+    };
   }
 
   private async handleRepairCost(
@@ -861,7 +856,7 @@ export class ConversationStepHandler {
         "⚠️ Please provide the other vehicle's registration number or type *none*.",
       );
     }
-    if(cleaned.toLocaleLowerCase() === "none") {
+    if (cleaned.toLocaleLowerCase() === "none") {
       return this.next(
         state,
         ClaimStep.AWAITING_POLICE_WITNESSED,
