@@ -245,19 +245,6 @@ export class ConversationStepHandler {
         "⚠️ Invalid time format. Please use *HH:MM* format\n_Eg: 14:30 or 2:30 PM_",
       );
     }
-    // return this.next(
-    //   state,
-    //   ClaimStep.AWAITING_LOCATION,
-    //   { accidentTime: userMessage.trim() },
-    //   "Where did the accident happen?\n\nPlease provide the location\n_Eg: Osu near Calvary Church, Accra_",
-    //   userMessage,
-    // );
-    // return {
-    //   newState: state,
-    //   response:
-    //     "📍 Please share the *location where the accident happened*.\n\nYou can share the location using the button below.",
-    //   locationRequest: true, // ← orchestrator will call sendLocationRequest
-    // };
 
     return {
       newState: {

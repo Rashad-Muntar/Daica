@@ -1,27 +1,80 @@
 import { AIClient } from "./ai.client";
-import { AIResponseParser } from "./ai.responseParser";
-import { AIPromptBuilder } from "./ai.promptBuilder";
+import { AIParser } from "./ai.responseParser";
 
-import { Claim } from "../claims/claim.entity";
-import { FraudAnalysis } from "../fraud/fraudAnalysis.entity";
-import type { AIAssessmentResult } from "./ai.types";
+import {
+  ClaimAssessmentPromptBuilder,
+  DamageEvidencePromptBuilder,
+  DocumentPromptBuilder,
+} from "./ai.promptBuilder";
+import type {
+  AIAssessmentResult,
+  EvidenceResult,
+  DocumentValidationResult,
+  DocumentDuplicateResult,
+  DocumentType,
+} from "./ai.types";
+import type { Claim } from "../claims/claim.entity";
+import type { FraudAnalysis } from "../fraud/fraudAnalysis.entity";
 
 export class AIService {
+  private parser = new AIParser();
+
   constructor(private client: AIClient) {}
 
+  // ─── Claim Assessment (text) ───────────────────────────────────────────────
   async assessClaim(
     claim: Claim,
     fraud: FraudAnalysis,
   ): Promise<AIAssessmentResult> {
-    // 1. Build prompt (context engineering layer)
-    const prompt = AIPromptBuilder.buildClaimAssessmentPrompt(claim, fraud);
+    const prompt = ClaimAssessmentPromptBuilder.build(claim, fraud);
+    const raw = await this.client.generate(prompt);
+    return this.parser.parseClaimAssessment(raw);
+  }
 
-    // 2. Call model (external dependency layer)
-    const rawResponse = await this.client.generate(prompt);
+  // ─── Vehicle Damage (vision) ───────────────────────────────────────────────
+  async assessDamage(images: string[]): Promise<EvidenceResult> {
+    const prompt = DamageEvidencePromptBuilder.build(images.length);
+    const raw = await this.client.generateWithImages(prompt, images);
+    return this.parser.parseDamageEvidence(raw);
+  }
 
-    // 3. Parse + validate (safety layer)
-    const parsed = AIResponseParser.parse(rawResponse);
+  // ─── Document Validation (vision) ─────────────────────────────────────────
+  async validateDocument(
+    url: string,
+    docType: DocumentType,
+  ): Promise<DocumentValidationResult> {
+    const promptMap: Partial<Record<DocumentType, () => string>> = {
+      police_report: DocumentPromptBuilder.buildPoliceReportValidation,
+      repair_invoice: DocumentPromptBuilder.buildRepairInvoiceValidation,
+      ghana_card: DocumentPromptBuilder.buildGhanaCardValidation,
+      doctor_report: DocumentPromptBuilder.buildDoctorReportValidation,
+    };
 
-    return parsed;
+    const buildPrompt = promptMap[docType];
+    if (!buildPrompt) {
+      return {
+        isAuthentic: true,
+        confidence: 0,
+        missingElements: [],
+        suspiciousFlags: [],
+        summary: "",
+      };
+    }
+
+    const raw = await this.client.generateWithImages(buildPrompt(), [url]);
+    return this.parser.parseDocumentValidation(raw);
+  }
+
+  // ─── Document Duplicate Check (vision) ────────────────────────────────────
+  async compareDocuments(
+    url1: string,
+    url2: string,
+    docType: DocumentType,
+  ): Promise<DocumentDuplicateResult> {
+    const prompt = DocumentPromptBuilder.buildDuplicateCheck(
+      docType.replace("_", " "),
+    );
+    const raw = await this.client.generateWithImages(prompt, [url1, url2]);
+    return this.parser.parseDocumentDuplicate(raw);
   }
 }

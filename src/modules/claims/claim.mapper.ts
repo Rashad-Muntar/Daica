@@ -35,6 +35,12 @@ export class ClaimMapper {
       document.witness1,
       document.witness2,
       document.ghanaCardUrl ?? "",
+      document.imageHashes,
+      document.policeReportHash,
+      document.repairInvoiceHash,
+      document.ghanaCardHash,
+      document.doctorReportHash,
+     
     );
   }
 }

@@ -4,9 +4,9 @@ import { FraudRepository } from "./fraud.repository";
 import { Claim } from "../claims/claim.entity";
 
 export class FraudService {
-  constructor(private repo: FraudRepository) {}
+  constructor(private repo: FraudRepository, private fraudRules: FraudRules) {}
   async analyzeClaim(claim: Claim): Promise<FraudAnalysis> {
-    const result = FraudRules.evaluate(claim);
+    const result = await this.fraudRules.evaluate(claim);
     let riskLevel = FraudRiskLevel.LOW;
 
     if (result.score >= 70) {

@@ -29,7 +29,7 @@ export class ConversationOrchestrator {
     }
 
     await this.sessionService.save(message.recipient.phone, newState);
-  
+
     if (locationRequest) {
       await this.client.sendLocationRequest(message.recipient.phone, response);
     } else if (buttons && buttons.length > 0) {

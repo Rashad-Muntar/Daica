@@ -15,6 +15,7 @@ export interface ClaimDocument extends Document {
   images: string[];
   status: string;
   createdAt: Date;
+
   driverToBlame: boolean;
   otherPersonToBlame: boolean;
   otherPersonDetails: string;
@@ -39,6 +40,11 @@ export interface ClaimDocument extends Document {
   witness1: string;
   witness2: string;
   ghanaCardUrl?: string;
+  imageHashes: string[];
+  policeReportHash: string;
+  repairInvoiceHash: string;
+  ghanaCardHash: string;
+  doctorReportHash: string;
 }
 
 const InjuredPersonSchema = new Schema(
@@ -57,6 +63,11 @@ const ClaimSchema = new Schema<ClaimDocument>(
     accidentDate: { type: Date, required: true },
     accidentTime: { type: String, required: false },
     location: { type: String, required: true },
+    imageHashes: { type: [String], default: [] },
+    policeReportHash: { type: String, required: false },
+    repairInvoiceHash: { type: String, required: false },
+    ghanaCardHash: { type: String, required: false },
+    doctorReportHash: { type: String, required: false },
     images: { type: [String], default: [] },
     status: {
       type: String,

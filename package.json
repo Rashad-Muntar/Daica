@@ -47,6 +47,7 @@
     "express": "^5.2.1",
     "express-rate-limit": "^8.5.1",
     "helmet": "^8.1.0",
+    "jimp": "^1.6.1",
     "mongoose": "^9.6.2",
     "nodemon": "^3.1.14",
     "openai": "^6.38.0",

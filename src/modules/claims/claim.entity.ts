@@ -33,6 +33,11 @@ export class Claim {
     public witness1: string = "",
     public witness2: string = "",
     public ghanaCardUrl: string = "",
+    public imageHashes: string[],
+    public policeReportHash: string = "",
+    public repairInvoiceHash: string = "",
+    public ghanaCardHash: string = "",
+    public doctorReportHash: string = "",
   ) {}
 
   updateStatus(status: ClaimStatus) {

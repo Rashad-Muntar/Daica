@@ -11,12 +11,45 @@ export class AIClient {
     });
   }
 
+  // ← text only — for prompts without images
   async generate(prompt: string): Promise<string> {
-    const response = await this.client.responses.create({
-      model: "llama-3.3-70b-versatile",
-      input: prompt,
+    const response = await this.client.chat.completions.create({
+      model: "meta-llama/llama-4-scout-17b-16e-instruct",
+      messages: [
+        {
+          role: "system",
+          content: "You are a precise insurance claims analysis system.",
+        },
+        {
+          role: "user",
+          content: prompt, // ← plain string, no array
+        },
+      ],
     });
+    return response?.choices[0]?.message?.content ?? "";
+  }
 
-    return response.output_text;
+  // ← vision — for prompts that include images
+  async generateWithImages(prompt: string, imageUrls: string[]): Promise<string> {
+    const response = await this.client.chat.completions.create({
+      model: "llama-3.2-11b-vision-preview", // ← vision model
+      messages: [
+        {
+          role: "system",
+          content: "You are a precise insurance vehicle damage analysis system.",
+        },
+        {
+          role: "user",
+          content: [
+            { type: "text", text: prompt },
+            ...imageUrls.map((url) => ({
+              type: "image_url" as const,
+              image_url: { url },
+            })),
+          ],
+        },
+      ],
+    });
+    return response?.choices[0]?.message?.content ?? "";
   }
 }

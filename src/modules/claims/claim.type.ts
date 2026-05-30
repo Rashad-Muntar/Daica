@@ -36,5 +36,18 @@ export interface IClaim {
   witness1?: string | undefined;
   witness2?: string | undefined;
   ghanaCardUrl?: string | undefined;
+
+
+  imageHashes?: string[] | undefined;
+  policeReportHash?: string | undefined;
+  repairInvoiceHash?: string | undefined;
+  ghanaCardHash?: string | undefined;
+  doctorReportHash?: string | undefined;
+  policeReportPHash?: string | undefined;
+  repairInvoicePHash?: string | undefined;
+  ghanaCardPHash?: string | undefined;
+  doctorReportPHash?: string | undefined;
+  imagePHashes?: string[] | undefined;
+
   isComplete?: (() => boolean) | undefined;
 }
