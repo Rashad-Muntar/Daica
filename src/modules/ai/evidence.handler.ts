@@ -13,7 +13,6 @@ export class EvidenceHandler {
     this.eventBus.subscribe(EventType.CLAIM_SUBMITTED, async (event) => {
       const claim = event.payload as Claim;
       const evidence = await this.aiService.assessDamage(claim.vehicleImages);
-      console.log(claim, evidence); // ← assessDamage
       await this.eventBus.publish({
         type: EventType.EVIDENCE_ANALYZED,
         timestamp: new Date(),

@@ -89,7 +89,7 @@ export class DocumentFraudService {
       similarClaimId: "",
       explanation: "",
     };
-    // console.log(url)
+
     if (!url) return empty;
 
     // Run hash + pHash + AI validation in parallel
@@ -98,7 +98,6 @@ export class DocumentFraudService {
       this.perceptualHash(url).catch(() => null),
       this.aiService.validateDocument(url, docType), // ← uses AIService
     ]);
-    // console.log(sha256Hash, pHash, validationResult)
     if (!sha256Hash) return empty;
 
     const [exactMatch, visualMatch] = await Promise.all([
@@ -135,8 +134,7 @@ export class DocumentFraudService {
         }
       }
     }
-    // console.log("DOC FRAUD IS FIRED------------------------");
-    // similarClaimId = matchedClaimId ? matchedClaimId : "";
+
     const result = {
       isReused,
       isAuthentic: validationResult.isAuthentic,

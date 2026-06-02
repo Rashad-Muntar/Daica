@@ -10,12 +10,14 @@ export class FraudHandler {
   ) {}
   register() {
     this.eventBus.subscribe(EventType.CLAIM_SUBMITTED, async (event) => {
-      const claim = event.payload as Claim;
+      const { claim, callbackUrl } = event.payload as {
+      claim: Claim; claimId: string; callbackUrl?: string;
+    };
       const fraud = await this.fraudService.analyzeClaim(claim);
       await this.eventBus.publish({
         type: EventType.FRAUD_ANALYZED,
         timestamp: new Date(),
-        payload: { claim, fraud },
+        payload:   { claim, fraud, callbackUrl },
       });
     });
   }

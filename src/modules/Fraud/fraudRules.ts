@@ -218,7 +218,6 @@ export class FraudRules {
     //     // Run all document checks in parallel
     const docResults = await Promise.allSettled(
       documentsToCheck.map(async (doc) => {
-        // console.log("DOCUMENT CHECK:", doc.type, doc.url);
         if (!doc.url) return null;
 
         const result = await this.documentFraudService.checkDocument(
@@ -226,7 +225,7 @@ export class FraudRules {
           doc.type,
           claimId,
         );
-        console.log("CHECK RESULT:", doc.type, result);
+  
 
         return { doc, result };
       }),
@@ -359,7 +358,7 @@ export class FraudRules {
       reasons,
       documentFlags,
     };
-    console.log(result);
+
     return result;
   }
 }

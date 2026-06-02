@@ -12,15 +12,14 @@ export class AIHandler {
 
   register() {
     this.eventBus.subscribe(EventType.FRAUD_ANALYZED, async (event) => {
-      const { claim, fraud } = event.payload as {
-        claim: Claim;
-        fraud: FraudAnalysis;
-      };
+        const { claim, claimId, fraud, callbackUrl } = event.payload as {
+      claim: Claim; claimId: string; fraud: FraudAnalysis; callbackUrl?: string;
+    };
       const ai = await this.aiService.assessClaim(claim, fraud); // ← assessClaim
       await this.eventBus.publish({
         type: EventType.AI_ANALYZED,
         timestamp: new Date(),
-        payload: { claim, fraud, ai },
+        payload:   { claim, claimId, fraud, ai, callbackUrl }
       });
     });
   }

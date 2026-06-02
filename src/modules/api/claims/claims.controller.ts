@@ -1,51 +1,52 @@
 import type { Request, Response } from "express";
 import { ClaimService } from "@/modules/claims/claim.service";
-import { EventBus } from "@/modules/events/eventBus";
 import { CloudinaryService } from "@/integrations/cloudinary/cloudinary.service";
-import { EventType } from "@/modules/events/event.types";
 
 export class ClaimController {
   constructor(
     private claimService: ClaimService,
     private cloudinaryService: CloudinaryService,
-    private eventBus: EventBus,
   ) {}
 
-  // POST /claims
+
   createClaim = async (req: Request, res: Response) => {
-    const data = req.body;
+    // console.log("Received claim submission:", req.body); // ← log incoming request
+  const { callbackUrl, ...data } = req.body;
 
-    if (
-      !data.user_id ||
-      !data.policyNumber ||
-      !data.accidentDate ||
-      !data.location
-    ) {
-      res
-        .status(400)
-        .json({
-          error:
-            "user_id, policyNumber, accidentDate and location are required",
-        });
-      return;
-    }
+  const extractedData = data.data
+  if (!extractedData.user_id || !extractedData.policyNumber || !extractedData.accidentDate || !extractedData.location) {
+    res.status(400).json({ error: "user_id, policyNumber, accidentDate and location are required" });
+    return;
+  }
 
-    const result = await new Promise<any>((resolve, reject) => {
-      const unsubscribe = this.eventBus.subscribeOnce(
-        EventType.DECISION_MADE,
-        (event) => resolve(event.payload),
-      );
+  if (!callbackUrl) {
+    res.status(400).json({ error: "callbackUrl is required" });
+    return;
+  }
 
-      this.claimService
-        .createClaim({ ...data, status: "PENDING" })
-        .catch((err) => {
-          unsubscribe();
-          reject(err);
-        });
-    });
-    console.log("Final claim processing result:", result);
-    res.status(201).json({ success: true });
-  };
+  // Basic URL validation
+  try {
+    new URL(callbackUrl);
+  } catch {
+    res.status(400).json({ error: "callbackUrl must be a valid URL" });
+    return;
+  }
+
+  await this.claimService.createClaim(
+    { ...extractedData, status: "PENDING" },
+    callbackUrl, // ← pass callback URL
+  );
+
+  // ← return 202 immediately — don't wait for pipeline
+  res.status(202).json({
+    success: true,
+    message: "Claim received and is being processed. Results will be sent to your callbackUrl.",
+    data: {
+      callbackUrl,
+      status:      "PROCESSING",
+    },
+  });
+};
 
   // POST /claims/images
   uploadDamageImages = async (req: Request, res: Response): Promise<void> => {

@@ -24,7 +24,7 @@ import { AuditRepository } from "@/modules/audit/audit.repository";
 import { CloudinaryService } from "@/integrations/cloudinary/cloudinary.service";
 import { CloudinaryClient } from "@/integrations/cloudinary/cloudinaty.client";
 import { ClaimController } from "@/modules/api/claims/claims.controller";
-
+import { WebhookService } from "@/modules/webhook/webhook.service";
 /**
  * SINGLE RESPONSIBILITY:
  * Wire all dependencies together.
@@ -37,6 +37,7 @@ export function buildAppContainer() {
   const fraudRepository = new FraudRepository();
   const auditRepository = new AuditRepository();
 
+
   //=============
   // CLIENTS
   //=============
@@ -46,6 +47,7 @@ export function buildAppContainer() {
   // ========================
   // SERVICES
   // ========================
+  const webhookService = new WebhookService();
   const aiService = new AIService(aiClient);
   const documentFraudService = new DocumentFraudService(
     aiService,
@@ -94,7 +96,6 @@ export function buildAppContainer() {
   const claimsController = new ClaimController(
     claimService,
     cloudinaryService,
-    eventBus,
   );
 
   // ====================
@@ -106,7 +107,7 @@ export function buildAppContainer() {
 
   const aiHandler = new AIHandler(eventBus, aiService);
 
-  const decisionHandler = new DecisionHandler(eventBus, decisionEngine);
+  const decisionHandler = new DecisionHandler(eventBus, decisionEngine, webhookService);
   const notificationHandler = new NotificationHandler(eventBus, whatsappClient);
   const auditHandler = new AuditHandler(eventBus, auditService);
 

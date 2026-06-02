@@ -13,7 +13,7 @@ export class ClaimService {
     private documentFraudService: DocumentFraudService,
   ) {}
 
-  async createClaim(data: IClaim) {
+  async createClaim(data: IClaim, callbackUrl?: string) {
     if (!data.vehicleImages) throw new Error("Images are required");
     if (!data.status) throw new Error("Status is required");
     const hashes = await this.documentFraudService.generateDocumentHashes({
@@ -69,7 +69,6 @@ export class ClaimService {
       hashes.imagePHashes,
     );
 
-    // console.log(claim)
 
     if (!claim.isComplete()) {
       throw new UnprocessableEntityError("Claim is incomplete");
@@ -79,7 +78,11 @@ export class ClaimService {
     this.eventBus.publish({
       type: EventType.CLAIM_SUBMITTED,
       timestamp: new Date(),
-      payload: claim,
+      payload:{
+        claim,
+        callbackUrl,
+      } ,
+      
     });
 
     return savedClaim;

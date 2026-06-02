@@ -8,5 +8,9 @@ export function createWhatssapRouter(service: WhatssapService): Router {
 
   router.get("/wa_callbackurl", controller.verifyHook);
   router.post("/wa_callbackurl", controller.receivedMessage);
+  router.post("test_callback", (req, res) => {
+    console.log("Received test callback:", req.body);
+    res.sendStatus(200);
+  })
   return router;
 }
