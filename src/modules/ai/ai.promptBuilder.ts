@@ -66,7 +66,7 @@ Return ONLY valid JSON. No commentary or statement.
 
 // ─── Vehicle Damage Evidence ─────────────────────────────────────────────────
 export class DamageEvidencePromptBuilder {
-  static build(imageCount: number): string {
+  static buildDamageCheck(imageCount: number): string {
     return `
 You are an insurance vehicle damage analyst.
 

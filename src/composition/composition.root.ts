@@ -23,6 +23,7 @@ import { AuditService } from "@/modules/audit/audit.service";
 import { AuditRepository } from "@/modules/audit/audit.repository";
 import { CloudinaryService } from "@/integrations/cloudinary/cloudinary.service";
 import { CloudinaryClient } from "@/integrations/cloudinary/cloudinaty.client";
+import { ClaimController } from "@/modules/api/claims/claims.controller";
 
 /**
  * SINGLE RESPONSIBILITY:
@@ -45,21 +46,22 @@ export function buildAppContainer() {
   // ========================
   // SERVICES
   // ========================
+    const aiService = new AIService(aiClient);
+  const documentFraudService = new DocumentFraudService(
+    aiService,
+    claimRepository,
+  );
   const cloudinryClient = new CloudinaryClient();
   const cloudinaryService = new CloudinaryService(cloudinryClient);
   const eventBus = new EventBus();
-  const claimService = new ClaimService(claimRepository, eventBus);
+  const claimService = new ClaimService(claimRepository, eventBus, documentFraudService);
   const conversationHandler = new ConversationStepHandler(
     claimService,
     sessionService,
     cloudinaryService,
   );
 
-  const aiService = new AIService(aiClient);
-  const documentFraudService = new DocumentFraudService(
-    aiService,
-    claimRepository,
-  );
+
   const fraudRules = new FraudRules(documentFraudService, claimRepository);
   const fraudService = new FraudService(fraudRepository, fraudRules);
 
@@ -86,6 +88,7 @@ export function buildAppContainer() {
     conversationOrchestrator,
     // whatsappClient,
   );
+  const claimsController = new ClaimController(claimService, cloudinaryService, eventBus);
 
   // ====================
   // EVENT HANDLERS
@@ -108,5 +111,6 @@ export function buildAppContainer() {
 
   return {
     whatsappService,
+    claimsController,
   };
 }

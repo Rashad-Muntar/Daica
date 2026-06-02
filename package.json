@@ -9,6 +9,7 @@
     "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/multer": "^2.1.0",
     "@types/node": "^25.6.0",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
@@ -39,6 +40,7 @@
     "start": "node dist/server.js"
   },
   "dependencies": {
+    "Express": "^3.0.1",
     "axios": "^1.16.1",
     "cloudinary": "^2.10.0",
     "compression": "^1.8.1",
@@ -49,6 +51,7 @@
     "helmet": "^8.1.0",
     "jimp": "^1.6.1",
     "mongoose": "^9.6.2",
+    "multer": "^2.1.1",
     "nodemon": "^3.1.14",
     "openai": "^6.38.0",
     "pino": "^10.3.1",

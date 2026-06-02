@@ -10,7 +10,7 @@ export interface IClaim {
   accidentTime?: string | undefined;
   policyNumber: string;
   location: string;
-  images?: string[] | undefined;
+  vehicleImages?: string[] | undefined;
   status?: string | undefined;
   driverToBlame?: boolean | undefined;
   otherPersonToBlame?: boolean | undefined;
@@ -36,7 +36,6 @@ export interface IClaim {
   witness1?: string | undefined;
   witness2?: string | undefined;
   ghanaCardUrl?: string | undefined;
-
 
   imageHashes?: string[] | undefined;
   policeReportHash?: string | undefined;

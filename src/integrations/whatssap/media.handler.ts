@@ -23,13 +23,6 @@ export class MediaService {
       const mimeType = response.headers["content-type"];
       const dataUri = `data:${mimeType};base64,${base64}`;
 
-      // const uploadimgs = await this.uploadService.uploadImages(dataUri)
-
-      // Step 3: Upload to Cloudinary
-      // const uploaded = await cloudinary.uploader.upload(dataUri, {
-      //   folder: "whatsapp-claims",
-      // });
-
       return dataUri;
     });
 

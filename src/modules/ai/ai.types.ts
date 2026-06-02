@@ -1,64 +1,64 @@
 // ─── Claim Assessment ────────────────────────────────────────────────────────
 export enum ClaimUrgency {
-  LOW    = "LOW",
+  LOW = "LOW",
   MEDIUM = "MEDIUM",
-  HIGH   = "HIGH",
+  HIGH = "HIGH",
 }
 
 export enum ReviewRecommendation {
-  APPROVE           = "APPROVE",
-  REJECT            = "REJECT",
-  ESCALATE          = "ESCALATE",
+  APPROVE = "APPROVE",
+  REJECT = "REJECT",
+  ESCALATE = "ESCALATE",
   REQUEST_MORE_INFO = "REQUEST_MORE_INFO",
 }
 
 export interface AIAssessmentResult {
-  summary:            string;
+  summary: string;
   missingInformation: string[];
-  contradictions:     string[];
-  urgency:            ClaimUrgency;
-  recommendation:     ReviewRecommendation;
-  confidence:         number;
+  contradictions: string[];
+  urgency: ClaimUrgency;
+  recommendation: ReviewRecommendation;
+  confidence: number;
 }
 
 // ─── Vehicle Damage Evidence ─────────────────────────────────────────────────
 export interface EvidenceResult {
-  damageDetected:    boolean;
-  damageArea:        "FRONT" | "REAR" | "LEFT" | "RIGHT" | "MULTIPLE" | "UNKNOWN";
-  severity:          "LOW" | "MEDIUM" | "HIGH";
-  confidence:        number;
-  imagesAnalyzed:    number;
+  damageDetected: boolean;
+  damageArea: "FRONT" | "REAR" | "LEFT" | "RIGHT" | "MULTIPLE" | "UNKNOWN";
+  severity: "LOW" | "MEDIUM" | "HIGH";
+  confidence: number;
+  imagesAnalyzed: number;
   visibleIndicators: string[];
-  suspiciousFlags:   string[];
-  summary:           string;
+  suspiciousFlags: string[];
+  summary: string;
 }
 
 // ─── Document Verification ───────────────────────────────────────────────────
 export interface DocumentValidationResult {
-  isAuthentic:     boolean;
-  confidence:      number;
+  isAuthentic: boolean;
+  confidence: number;
   missingElements: string[];
   suspiciousFlags: string[];
-  summary:         string;
+  summary: string;
 }
 
 export interface DocumentDuplicateResult {
-  isSameContent:   boolean;
-  confidence:      number;
-  tamperedFields:  string[];
+  isSameContent: boolean;
+  confidence: number;
+  tamperedFields: string[];
   suspiciousFlags: string[];
-  explanation:     string;
+  explanation: string;
 }
 
 export interface DocumentCheckResult {
-  isReused:        boolean;
-  isAuthentic:     boolean;
-  confidence:      number;
+  isReused: boolean;
+  isAuthentic: boolean;
+  confidence: number;
   similarClaimId?: string;
-  tamperedFields:  string[];
+  tamperedFields: string[];
   suspiciousFlags: string[];
   missingElements: string[];
-  explanation:     string;
+  explanation: string;
 }
 
 export type DocumentType =

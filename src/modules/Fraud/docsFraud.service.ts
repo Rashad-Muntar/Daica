@@ -14,7 +14,10 @@ export class DocumentFraudService {
 
   async hashFromUrl(url: string): Promise<string> {
     const response = await axios.get(url, { responseType: "arraybuffer" });
-    return crypto.createHash("sha256").update(Buffer.from(response.data)).digest("hex");
+    return crypto
+      .createHash("sha256")
+      .update(Buffer.from(response.data))
+      .digest("hex");
   }
 
   async perceptualHash(url: string): Promise<string> {
@@ -47,20 +50,23 @@ export class DocumentFraudService {
     const newHash = await this.perceptualHash(url);
 
     const fieldMap: Record<string, string> = {
-      police_report:  "policeReportPHash",
+      police_report: "policeReportPHash",
       repair_invoice: "repairInvoicePHash",
-      ghana_card:     "ghanaCardPHash",
-      doctor_report:  "doctorReportPHash",
+      ghana_card: "ghanaCardPHash",
+      doctor_report: "doctorReportPHash",
     };
 
     const field = fieldMap[docType];
     if (!field) return null;
 
-    const allClaims = await this.claimRepo.findAllPHashes(field, currentClaimId);
+    const allClaims = await this.claimRepo.findAllPHashes(
+      field,
+      currentClaimId,
+    );
 
     for (const claim of allClaims) {
       if (!claim.hash) continue;
-      const distance   = this.hammingDistance(newHash, claim.hash);
+      const distance = this.hammingDistance(newHash, claim.hash);
       const similarity = ((64 - distance) / 64) * 100;
       if (similarity >= 90) return { claimId: claim.id, similarity };
     }
@@ -74,26 +80,27 @@ export class DocumentFraudService {
     currentClaimId?: string,
   ): Promise<DocumentCheckResult> {
     const empty: DocumentCheckResult = {
-      isReused: false, isAuthentic: true, confidence: 0,
-      tamperedFields: [], 
-      suspiciousFlags: [], 
+      isReused: false,
+      isAuthentic: true,
+      confidence: 0,
+      tamperedFields: [],
+      suspiciousFlags: [],
       missingElements: [],
-      similarClaimId: "", 
+      similarClaimId: "",
       explanation: "",
     };
-
+    // console.log(url)
     if (!url) return empty;
-
+ 
     // Run hash + pHash + AI validation in parallel
     const [sha256Hash, pHash, validationResult] = await Promise.all([
       this.hashFromUrl(url).catch(() => null),
       this.perceptualHash(url).catch(() => null),
       this.aiService.validateDocument(url, docType), // ← uses AIService
     ]);
-
+  // console.log(sha256Hash, pHash, validationResult)
     if (!sha256Hash) return empty;
-
-    // Check exact hash match and visual match
+   
     const [exactMatch, visualMatch] = await Promise.all([
       this.claimRepo.findByDocumentHash(sha256Hash, currentClaimId),
       pHash ? this.findVisualDuplicate(url, docType, currentClaimId) : null,
@@ -109,46 +116,115 @@ export class DocumentFraudService {
 
     if (matchedClaimId) {
       const existingClaim = await this.claimRepo.findById(matchedClaimId);
-      const existingUrl   = this.getDocUrlFromClaim(existingClaim, docType);
+      const existingUrl = this.getDocUrlFromClaim(existingClaim, docType);
 
       if (existingUrl) {
         // AI confirms it's actually the same content
-        const comparison = await this.aiService.compareDocuments(url, existingUrl, docType);
+        const comparison = await this.aiService.compareDocuments(
+          url,
+          existingUrl,
+          docType,
+        );
 
         if (comparison.isSameContent) {
-          isReused       = true;
+          isReused = true;
           similarClaimId = matchedClaimId;
           tamperedFields = comparison.tamperedFields;
-          reusedFlags    = comparison.suspiciousFlags;
-          explanation    = `Document reused from claim ${matchedClaimId}: ${comparison.explanation}`;
+          reusedFlags = comparison.suspiciousFlags;
+          explanation = `Document reused from claim ${matchedClaimId}: ${comparison.explanation}`;
         }
       }
     }
-
+    // console.log("DOC FRAUD IS FIRED------------------------");
     // similarClaimId = matchedClaimId ? matchedClaimId : "";
-    return {
+    const result = {
       isReused,
-      isAuthentic:     validationResult.isAuthentic,
-      confidence:      validationResult.confidence,
+      isAuthentic: validationResult.isAuthentic,
+      confidence: validationResult.confidence,
       similarClaimId,
       tamperedFields,
       suspiciousFlags: [...validationResult.suspiciousFlags, ...reusedFlags],
       missingElements: validationResult.missingElements,
-      explanation:     explanation || validationResult.summary,
+      explanation: explanation || validationResult.summary,
     };
+    return result;
   }
 
-  private getDocUrlFromClaim(claim: any, docType: DocumentType): string | undefined {
+  private getDocUrlFromClaim(
+    claim: any,
+    docType: DocumentType,
+  ): string | undefined {
     const map: Partial<Record<DocumentType, string>> = {
-      police_report:  "policeReportUrl",
+      police_report: "policeReportUrl",
       repair_invoice: "repairInvoiceUrl",
-      ghana_card:     "ghanaCardUrl",
-      doctor_report:  "doctorReportUrl",
-      damage_image:   "images",
+      ghana_card: "ghanaCardUrl",
+      doctor_report: "doctorReportUrl",
+      damage_image: "vehicleImages",
     };
     const field = map[docType];
     if (!field) return undefined;
-    if (field === "images") return claim?.images?.[0];
+    if (field === "vehicleImages") return claim?.vehicleImages?.[0];
     return claim?.[field];
+  }
+
+  async generateHashes(url: string): Promise<{
+    sha256: string;
+    pHash: string;
+  }> {
+    const [sha256, pHash] = await Promise.all([
+      this.hashFromUrl(url),
+      this.perceptualHash(url),
+    ]);
+
+    return {
+      sha256,
+      pHash,
+    };
+  }
+
+  async generateDocumentHashes(data: {
+    vehicleImages?: string[];
+    policeReportUrl?: string;
+    repairInvoiceUrl?: string;
+    doctorReportUrl?: string;
+    ghanaCardUrl?: string;
+  }) {
+    const [
+      vehicleResults,
+      policeReport,
+      repairInvoice,
+      doctorReport,
+      ghanaCard,
+    ] = await Promise.all([
+      Promise.all(
+        (data.vehicleImages ?? []).map((url) => this.generateHashes(url)),
+      ),
+
+      data.policeReportUrl ? this.generateHashes(data.policeReportUrl) : null,
+
+      data.repairInvoiceUrl ? this.generateHashes(data.repairInvoiceUrl) : null,
+
+      data.doctorReportUrl ? this.generateHashes(data.doctorReportUrl) : null,
+
+      data.ghanaCardUrl ? this.generateHashes(data.ghanaCardUrl) : null,
+    ]);
+    
+    const result = {
+      imageHashes: vehicleResults.map((x) => x.sha256),
+      imagePHashes: vehicleResults.map((x) => x.pHash),
+
+      policeReportHash: policeReport?.sha256 ?? "",
+      policeReportPHash: policeReport?.pHash ?? "",
+
+      repairInvoiceHash: repairInvoice?.sha256 ?? "",
+      repairInvoicePHash: repairInvoice?.pHash ?? "",
+
+      doctorReportHash: doctorReport?.sha256 ?? "",
+      doctorReportPHash: doctorReport?.pHash ?? "",
+
+      ghanaCardHash: ghanaCard?.sha256 ?? "",
+      ghanaCardPHash: ghanaCard?.pHash ?? "",
+    };
+    return result;
   }
 }

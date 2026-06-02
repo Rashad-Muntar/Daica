@@ -10,7 +10,7 @@ export class ClaimRepository {
       accidentDate: claim.accidentDate,
       accidentTime: claim.accidentTime,
       location: claim.location,
-      images: claim.images ?? [],
+      vehicleImages: claim.vehicleImages ?? [],
       status: claim.status ?? "PENDING",
       driverToBlame: claim.driverToBlame,
       otherPersonToBlame: claim.otherPersonToBlame,
@@ -36,6 +36,17 @@ export class ClaimRepository {
       witness1: claim.witness1,
       witness2: claim.witness2,
       ghanaCardUrl: claim.ghanaCardUrl,
+      imageHashes: claim.imageHashes || [],
+      policeReportHash: claim.policeReportHash || "",
+      repairInvoiceHash: claim.repairInvoiceHash || "",
+      ghanaCardHash: claim.ghanaCardHash || "",
+      doctorReportHash: claim.doctorReportHash || "",
+
+      policeReportPHash: claim.policeReportPHash || "",
+      repairInvoicePHash: claim.repairInvoicePHash || "",
+      ghanaCardPHash: claim.ghanaCardPHash || "",
+      doctorReportPHash: claim.doctorReportPHash || "",
+      imagePHashes: claim.imagePHashes || [],
     });
 
     return ClaimMapper.toEntity(createdClaim);

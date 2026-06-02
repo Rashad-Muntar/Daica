@@ -9,7 +9,7 @@ export class ClaimMapper {
       document.policyNumber,
       document.accidentDate,
       document.accidentTime,
-      document.images,
+      document.vehicleImages,
       document.status,
       document.driverToBlame,
       document.otherPersonToBlame,
@@ -40,7 +40,11 @@ export class ClaimMapper {
       document.repairInvoiceHash,
       document.ghanaCardHash,
       document.doctorReportHash,
-     
+      document.policeReportPHash ?? "",
+      document.repairInvoicePHash ?? "",
+      document.ghanaCardPHash ?? "",
+      document.doctorReportPHash ?? "",
+      document.imagePHashes ?? [],
     );
   }
 }

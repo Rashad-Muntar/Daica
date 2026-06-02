@@ -7,7 +7,7 @@ export class Claim {
     public policyNumber: string,
     public accidentDate: Date,
     public accidentTime: string,
-    public images: string[],
+    public vehicleImages: string[],
     public status: string,
     public driverToBlame: boolean = false,
     public otherPersonToBlame: boolean = false,
@@ -38,6 +38,11 @@ export class Claim {
     public repairInvoiceHash: string = "",
     public ghanaCardHash: string = "",
     public doctorReportHash: string = "",
+    public policeReportPHash: string = "",
+    public repairInvoicePHash: string = "",
+    public ghanaCardPHash: string = "",
+    public doctorReportPHash: string = "",
+    public imagePHashes: string[] = [],
   ) {}
 
   updateStatus(status: ClaimStatus) {

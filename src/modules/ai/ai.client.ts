@@ -30,26 +30,35 @@ export class AIClient {
   }
 
   // ← vision — for prompts that include images
-  async generateWithImages(prompt: string, imageUrls: string[]): Promise<string> {
-    const response = await this.client.chat.completions.create({
-      model: "llama-3.2-11b-vision-preview", // ← vision model
-      messages: [
-        {
-          role: "system",
-          content: "You are a precise insurance vehicle damage analysis system.",
-        },
-        {
-          role: "user",
-          content: [
-            { type: "text", text: prompt },
-            ...imageUrls.map((url) => ({
-              type: "image_url" as const,
-              image_url: { url },
-            })),
-          ],
-        },
-      ],
-    });
-    return response?.choices[0]?.message?.content ?? "";
+  async generateWithImages(
+    prompt: string,
+    imageUrls: string[],
+  ): Promise<string | ""> {
+    try {
+      const response = await this.client.chat.completions.create({
+        model: "meta-llama/llama-4-scout-17b-16e-instruct", // ← vision model
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a precise insurance vehicle damage analysis system.",
+          },
+          {
+            role: "user",
+            content: [
+              { type: "text", text: prompt },
+              ...imageUrls.map((url) => ({
+                type: "image_url" as const,
+                image_url: { url },
+              })),
+            ],
+          },
+        ],
+      });
+      return response?.choices[0]?.message?.content ?? "";
+    } catch (error) {
+      console.error("Error during AI generation:", error);
+      return "";
+    }
   }
 }

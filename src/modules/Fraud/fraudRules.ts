@@ -3,86 +3,6 @@ import { Claim } from "../claims/claim.entity";
 import { ClaimRepository } from "../claims/claim.repository";
 import { DocumentFraudService } from "./docsFraud.service";
 
-// export class FraudRules {
-//     constructor(private documentFraudService: DocumentFraudService) {}
-//   static evaluate(claim: Claim) {
-//     let score = 0;
-//     const reasons: string[] = [];
-
-//     if (!claim.images) throw new Error("Claim does not have images");
-
-//     // Images
-//     if (claim.images.length === 0) {
-//       score += 30;
-//       reasons.push("No supporting images provided");
-//     }
-
-//     // Accident date
-//     if (isMoreThan10DaysAgo(claim.accidentDate)) {
-//       score += 20;
-//       reasons.push("Accident reported more than 10 days after occurrence");
-//     }
-
-//     // Location
-//     if (!claim.location || claim.location.toLowerCase() === "unknown") {
-//       score += 40;
-//       reasons.push("Invalid or missing accident location");
-//     }
-
-//     // No description of accident
-//     if (!claim.accidentDescription) {
-//       score += 15;
-//       reasons.push("No accident description provided");
-//     }
-
-//     // No blame assigned — suspicious if neither box ticked
-//     if (!claim.driverToBlame && !claim.otherPersonToBlame) {
-//       score += 10;
-//       reasons.push("No party assigned blame for the accident");
-//     }
-
-//     // Other person blamed but no details given
-//     if (claim.otherPersonToBlame && !claim.otherPersonDetails) {
-//       score += 20;
-//       reasons.push("Other person blamed but no details provided");
-//     }
-
-//     // No vehicle damage description
-//     if (!claim.vehicleDamageDescription) {
-//       score += 15;
-//       reasons.push("No vehicle damage description provided");
-//     }
-
-//     // No repair estimate
-//     if (!claim.estimatedRepairCost || claim.estimatedRepairCost === 0) {
-//       score += 10;
-//       reasons.push("No repair cost estimate provided");
-//     }
-
-//     // Other vehicle involved but no details
-//     if (!claim.otherVehicleRegNumber && !claim.otherVehicleMake) {
-//       score += 10;
-//       reasons.push("No details of other vehicle involved");
-//     }
-
-//     // Police involved but no officer details
-//     if (claim.policeWitnessed && !claim.policeOfficerName) {
-//       score += 15;
-//       reasons.push(
-//         "Police said to have witnessed but no officer details given",
-//       );
-//     }
-
-//     // No witnesses at all
-//     if (!claim.witness1 && !claim.witness2) {
-//       score += 5;
-//       reasons.push("No witnesses provided");
-//     }
-
-//     return { score, reasons };
-//   }
-// }
-
 export interface FraudEvaluationResult {
   score: number;
   riskLevel: "LOW" | "MEDIUM" | "HIGH";
@@ -94,7 +14,7 @@ export interface DocumentFlag {
   docType: string;
   isReused: boolean;
   isAuthentic: boolean;
-  similarClaimId?: string;
+  similarClaimId?: string | undefined;
   suspiciousFlags: string[];
   missingElements: string[];
   explanation: string;
@@ -114,7 +34,7 @@ export class FraudRules {
     const reasons: string[] = [];
     const documentFlags: DocumentFlag[] = [];
 
-    if (!claim.images) throw new Error("Claim does not have images");
+    if (!claim.vehicleImages) throw new Error("Claim does not have images");
 
     // ─── 1. CLAIM TIMING ─────────────────────────────────────────────────────
 
@@ -153,7 +73,7 @@ export class FraudRules {
     // ─── 2. EVIDENCE COMPLETENESS ────────────────────────────────────────────
 
     // No damage images
-    if (claim.images.length === 0) {
+    if (claim.vehicleImages.length === 0) {
       score += 30;
       reasons.push("No supporting damage images provided");
     }
@@ -295,9 +215,10 @@ export class FraudRules {
       },
     ];
 
-    // Run all document checks in parallel
+//     // Run all document checks in parallel
     const docResults = await Promise.allSettled(
       documentsToCheck.map(async (doc) => {
+        // console.log("DOCUMENT CHECK:", doc.type, doc.url);
         if (!doc.url) return null;
 
         const result = await this.documentFraudService.checkDocument(
@@ -305,6 +226,7 @@ export class FraudRules {
           doc.type,
           claimId,
         );
+        console.log("CHECK RESULT:", doc.type, result);
 
         return { doc, result };
       }),
@@ -313,7 +235,7 @@ export class FraudRules {
     for (const settled of docResults) {
       if (settled.status === "rejected" || !settled.value) continue;
       const { doc, result } = settled.value;
-
+      
       const flag: DocumentFlag = {
         docType: doc.label,
         isReused: result.isReused,
@@ -360,8 +282,45 @@ export class FraudRules {
     }
 
     // Check damage images for reuse
+    
+    for (const settled of docResults) {
+  if (settled.status === "rejected" || !settled.value) continue;
+  const { doc, result } = settled.value;
+
+  // ← always push the flag, even if clean
+  const flag: DocumentFlag = {
+    docType:        doc.label,
+    isReused:       result.isReused,
+    isAuthentic:    result.isAuthentic,
+    similarClaimId: result.similarClaimId,
+    suspiciousFlags: result.suspiciousFlags,
+    missingElements: result.missingElements,
+    explanation:    result.explanation,
+  };
+  documentFlags.push(flag);
+
+  if (result.isReused) {
+    score += doc.reusedScore;
+    reasons.push(`${doc.label} was reused from a previous claim (Claim ID: ${result.similarClaimId})`);
+  }
+
+  if (!result.isAuthentic) {
+    score += doc.inauthenticScore;
+    reasons.push(`${doc.label} failed authenticity check: ${result.explanation}`);
+  }
+
+  if (result.suspiciousFlags.length > 0) {
+    score += result.suspiciousFlags.length * 5;
+    reasons.push(`${doc.label} has suspicious indicators: ${result.suspiciousFlags.join(", ")}`);
+  }
+
+  if (result.missingElements.length > 0) {
+    score += result.missingElements.length * 3;
+    reasons.push(`${doc.label} is missing: ${result.missingElements.join(", ")}`);
+  }
+}
     const imageChecks = await Promise.allSettled(
-      claim.images.map((url) =>
+      claim.vehicleImages.map((url) =>
         this.documentFraudService.checkDocument(url, "damage_image", claimId),
       ),
     );
@@ -386,11 +345,13 @@ export class FraudRules {
     const riskLevel: "LOW" | "MEDIUM" | "HIGH" =
       cappedScore >= 61 ? "HIGH" : cappedScore >= 31 ? "MEDIUM" : "LOW";
 
-    return {
+    const result = {
       score: cappedScore,
       riskLevel,
       reasons,
       documentFlags,
     };
+    console.log(result);
+    return result;
   }
 }

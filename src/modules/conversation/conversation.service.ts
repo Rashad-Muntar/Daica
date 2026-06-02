@@ -30,7 +30,7 @@ export class ConversationStateService {
           policyNumber: "",
           accidentDate: "",
           location: "",
-          images: [],
+          vehicleImages: [],
         },
       };
     }

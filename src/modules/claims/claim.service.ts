@@ -1,6 +1,7 @@
 import { Claim } from "./claim.entity";
 import { ClaimRepository } from "./claim.repository";
 import { UnprocessableEntityError } from "@/utils/errors";
+import { DocumentFraudService } from "../fraud/docsFraud.service";
 import type { IClaim } from "./claim.type";
 import { EventBus } from "../events/eventBus";
 import { EventType } from "../events/event.types";
@@ -9,19 +10,26 @@ export class ClaimService {
   constructor(
     private repo: ClaimRepository,
     private eventBus: EventBus,
+    private documentFraudService: DocumentFraudService,
   ) {}
 
   async createClaim(data: IClaim) {
-    if (!data.images)  throw new Error("Images are required");
-    if (!data.status)  throw new Error("Status is required");
-
+    if (!data.vehicleImages) throw new Error("Images are required");
+    if (!data.status) throw new Error("Status is required");
+    const hashes = await this.documentFraudService.generateDocumentHashes({
+      vehicleImages: data.vehicleImages || [],
+      policeReportUrl: data.policeReportUrl || "",
+      repairInvoiceUrl: data.repairInvoiceUrl || "",
+      doctorReportUrl: data.doctorReportUrl || "",
+      ghanaCardUrl: data.ghanaCardUrl || "",
+    });
     const claim = new Claim(
       data.user_id,
       data.location,
       data.policyNumber,
       data.accidentDate,
       data.accidentTime ?? "",
-      data.images,
+      data.vehicleImages,
       data.status,
       data.driverToBlame ?? false,
       data.otherPersonToBlame ?? false,
@@ -47,12 +55,21 @@ export class ClaimService {
       data.witness1 ?? "",
       data.witness2 ?? "",
       data.ghanaCardUrl ?? "",
-      data.imageHashes ?? [],
-      data.policeReportHash ?? "",
-      data.repairInvoiceHash ?? "",
-      data.ghanaCardHash ?? "",
-      data.doctorReportHash ?? "",
+      hashes.imageHashes,
+      hashes.policeReportHash,
+      hashes.repairInvoiceHash,
+      hashes.ghanaCardHash,
+      hashes.doctorReportHash,
+
+      hashes.policeReportPHash,
+      hashes.repairInvoicePHash,
+      hashes.ghanaCardPHash,
+      hashes.doctorReportPHash,
+
+      hashes.imagePHashes,
     );
+
+    // console.log(claim)
 
     if (!claim.isComplete()) {
       throw new UnprocessableEntityError("Claim is incomplete");

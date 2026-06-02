@@ -1033,14 +1033,14 @@ export class ConversationStepHandler {
       );
     }
 
-    const currentImages = state.data.images || [];
+    const currentImages = state.data.vehicleImages || [];
     const newImages = [...currentImages, ...images];
     const uploadedUrls =
       await MediaService.uploadWhatsAppImagesToCloudinary(newImages);
     const uploadedImg = await this.cloudMediaService.uploadImages(uploadedUrls);
     const newState: ConversationState = {
       ...state,
-      data: { ...state.data, images: uploadedImg },
+      data: { ...state.data, vehicleImages: uploadedImg },
       currentStep: ClaimStep.COMPLETE,
       lastMessage: userMessage,
       updatedAt: new Date(),
@@ -1074,7 +1074,7 @@ export class ConversationStepHandler {
       accidentDate: new Date(convertDayMonthToMonthDay(d.accidentDate!)),
       accidentTime: d.accidentTime!,
       location: d.location!,
-      images: d.images ?? [],
+      vehicleImages: d.vehicleImages ?? [],
       status: "PENDING",
       driverToBlame: d.driverToBlame,
       otherPersonToBlame: d.otherPersonToBlame,

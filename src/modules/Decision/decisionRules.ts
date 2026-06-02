@@ -17,6 +17,12 @@ export class DecisionRules {
       return {
         type: DecisionType.REJECT,
         reason: "High fraud risk detected",
+        analysisResults: {
+          fraudReasons: fraud.reasons,
+          aiSummary: ai.summary,
+          aiMissingInfo: ai.missingInformation,
+          aiContradictions: ai.contradictions,
+        },
         confidence: 0.9,
         explainability,
       };
@@ -29,6 +35,12 @@ export class DecisionRules {
         type: DecisionType.ESCALATE,
         reason: "Conflicting claim information",
         confidence: ai.confidence / 100,
+        analysisResults: {
+          fraudReasons: fraud.reasons,
+          aiSummary: ai.summary,
+          aiMissingInfo: ai.missingInformation,
+          aiContradictions: ai.contradictions,
+        },
         explainability,
       };
     }
@@ -39,6 +51,12 @@ export class DecisionRules {
       return {
         type: DecisionType.REQUEST_MORE_INFO,
         reason: "Incomplete claim information",
+        analysisResults: {
+          fraudReasons: fraud.reasons,
+          aiSummary: ai.summary,
+          aiMissingInfo: ai.missingInformation,
+          aiContradictions: ai.contradictions,
+        },
         confidence: 0.6,
         explainability,
       };
@@ -50,6 +68,12 @@ export class DecisionRules {
       return {
         type: DecisionType.APPROVE,
         reason: "Valid high-priority claim",
+        analysisResults: {
+          fraudReasons: fraud.reasons,
+          aiSummary: ai.summary,
+          aiMissingInfo: ai.missingInformation,
+          aiContradictions: ai.contradictions,
+        },
         confidence: 0.75,
         explainability,
       };
@@ -60,6 +84,12 @@ export class DecisionRules {
     return {
       type: DecisionType.ESCALATE,
       reason: "Requires human review",
+      analysisResults: {
+        fraudReasons: fraud.reasons,
+        aiSummary: ai.summary,
+        aiMissingInfo: ai.missingInformation,
+        aiContradictions: ai.contradictions,
+      },
       confidence: 0.5,
       explainability,
     };

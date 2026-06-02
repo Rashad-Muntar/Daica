@@ -78,7 +78,7 @@ export interface ConversationState {
     witness1?: string;
     witness2?: string;
     ghanaCardUrl?: string;
-    images?: string[];
+    vehicleImages?: string[];
     policyHolderId?: string;
   };
 }

@@ -10,6 +10,12 @@ export class Decision {
     public type: DecisionType,
     public reason: string,
     public confidence: number,
+    public analysisResults: {
+      fraudReasons: string[];
+      aiSummary: string;
+      aiMissingInfo: string[];
+      aiContradictions: string[];
+    },
     public explainability: string[],
   ) {}
 }

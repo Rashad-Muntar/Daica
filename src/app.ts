@@ -14,6 +14,7 @@ import { swaggerSpec } from "./config/swagger.config.ts";
 import { errorHandler } from "./middleware/error.middleware.ts";
 import { notFoundHandler } from "./middleware/notFound.middleware.ts";
 import { createWhatssapRouter } from "./integrations/whatssap/whatssap.route.ts";
+import { createClaimRouter } from "./modules/api/claims/claims.route.ts";
 import { buildAppContainer } from "./composition/composition.root.ts";
 export function createApp(): Application {
   const app = express();
@@ -66,11 +67,14 @@ export function createApp(): Application {
   );
   app.get(`${api}/docs.json`, (_req, res) => res.json(swaggerSpec));
   const container = buildAppContainer();
-  // const client          = new WhatssapClient();
-  const { whatsappService } = container;
-  const whatssapRouter = createWhatssapRouter(whatsappService);
-  // app.use(`${api}/health`, healthRouter);
+
+  const whatssapRouter = createWhatssapRouter(container.whatsappService);
+  const claimsRouter = createClaimRouter(container.claimsController);
+  app.use(`${api}/health`, (req, res) => res.json({ status: "ok" }));
   app.use(`${api}/meta`, whatssapRouter);
+  app.use(`${api}/claims`, claimsRouter);
+
+  
 
   //   404 handler
   app.use(notFoundHandler);
