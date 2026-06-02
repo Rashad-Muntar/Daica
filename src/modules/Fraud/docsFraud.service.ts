@@ -91,16 +91,16 @@ export class DocumentFraudService {
     };
     // console.log(url)
     if (!url) return empty;
- 
+
     // Run hash + pHash + AI validation in parallel
     const [sha256Hash, pHash, validationResult] = await Promise.all([
       this.hashFromUrl(url).catch(() => null),
       this.perceptualHash(url).catch(() => null),
       this.aiService.validateDocument(url, docType), // ← uses AIService
     ]);
-  // console.log(sha256Hash, pHash, validationResult)
+    // console.log(sha256Hash, pHash, validationResult)
     if (!sha256Hash) return empty;
-   
+
     const [exactMatch, visualMatch] = await Promise.all([
       this.claimRepo.findByDocumentHash(sha256Hash, currentClaimId),
       pHash ? this.findVisualDuplicate(url, docType, currentClaimId) : null,
@@ -208,7 +208,7 @@ export class DocumentFraudService {
 
       data.ghanaCardUrl ? this.generateHashes(data.ghanaCardUrl) : null,
     ]);
-    
+
     const result = {
       imageHashes: vehicleResults.map((x) => x.sha256),
       imagePHashes: vehicleResults.map((x) => x.pHash),

@@ -1,7 +1,12 @@
 import multer from "multer";
 import type { Request, Response, NextFunction } from "express";
 
-const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
+const ALLOWED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/gif",
+];
 const ALLOWED_DOCUMENT_TYPES = [...ALLOWED_IMAGE_TYPES, "application/pdf"]; // no webp
 
 const storage = multer.memoryStorage();
@@ -18,7 +23,11 @@ const documentFilter: multer.Options["fileFilter"] = (_req, file, cb) => {
   if (ALLOWED_DOCUMENT_TYPES.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error(`Invalid file type. Allowed: jpeg, jpg, png, gif, pdf. WebP is not accepted.`));
+    cb(
+      new Error(
+        `Invalid file type. Allowed: jpeg, jpg, png, gif, pdf. WebP is not accepted.`,
+      ),
+    );
   }
 };
 

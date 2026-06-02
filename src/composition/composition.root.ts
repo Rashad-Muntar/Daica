@@ -46,7 +46,7 @@ export function buildAppContainer() {
   // ========================
   // SERVICES
   // ========================
-    const aiService = new AIService(aiClient);
+  const aiService = new AIService(aiClient);
   const documentFraudService = new DocumentFraudService(
     aiService,
     claimRepository,
@@ -54,13 +54,16 @@ export function buildAppContainer() {
   const cloudinryClient = new CloudinaryClient();
   const cloudinaryService = new CloudinaryService(cloudinryClient);
   const eventBus = new EventBus();
-  const claimService = new ClaimService(claimRepository, eventBus, documentFraudService);
+  const claimService = new ClaimService(
+    claimRepository,
+    eventBus,
+    documentFraudService,
+  );
   const conversationHandler = new ConversationStepHandler(
     claimService,
     sessionService,
     cloudinaryService,
   );
-
 
   const fraudRules = new FraudRules(documentFraudService, claimRepository);
   const fraudService = new FraudService(fraudRepository, fraudRules);
@@ -88,7 +91,11 @@ export function buildAppContainer() {
     conversationOrchestrator,
     // whatsappClient,
   );
-  const claimsController = new ClaimController(claimService, cloudinaryService, eventBus);
+  const claimsController = new ClaimController(
+    claimService,
+    cloudinaryService,
+    eventBus,
+  );
 
   // ====================
   // EVENT HANDLERS

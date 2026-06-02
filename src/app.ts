@@ -74,8 +74,6 @@ export function createApp(): Application {
   app.use(`${api}/meta`, whatssapRouter);
   app.use(`${api}/claims`, claimsRouter);
 
-  
-
   //   404 handler
   app.use(notFoundHandler);
 

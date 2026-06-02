@@ -4,7 +4,6 @@ import { EventBus } from "@/modules/events/eventBus";
 import { CloudinaryService } from "@/integrations/cloudinary/cloudinary.service";
 import { EventType } from "@/modules/events/event.types";
 
-
 export class ClaimController {
   constructor(
     private claimService: ClaimService,
@@ -16,19 +15,29 @@ export class ClaimController {
   createClaim = async (req: Request, res: Response) => {
     const data = req.body;
 
-    if (!data.user_id || !data.policyNumber || !data.accidentDate || !data.location) {
-      res.status(400).json({ error: "user_id, policyNumber, accidentDate and location are required" });
+    if (
+      !data.user_id ||
+      !data.policyNumber ||
+      !data.accidentDate ||
+      !data.location
+    ) {
+      res
+        .status(400)
+        .json({
+          error:
+            "user_id, policyNumber, accidentDate and location are required",
+        });
       return;
     }
 
     const result = await new Promise<any>((resolve, reject) => {
-    
       const unsubscribe = this.eventBus.subscribeOnce(
         EventType.DECISION_MADE,
         (event) => resolve(event.payload),
       );
 
-      this.claimService.createClaim({ ...data, status: "PENDING" })
+      this.claimService
+        .createClaim({ ...data, status: "PENDING" })
         .catch((err) => {
           unsubscribe();
           reject(err);
@@ -36,7 +45,6 @@ export class ClaimController {
     });
     console.log("Final claim processing result:", result);
     res.status(201).json({ success: true });
-
   };
 
   // POST /claims/images
@@ -68,7 +76,10 @@ export class ClaimController {
 
     const base64 = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
     const resourceType = file.mimetype === "application/pdf" ? "raw" : "image";
-    const url = await this.cloudinaryService["client"].upload(base64, resourceType);
+    const url = await this.cloudinaryService["client"].upload(
+      base64,
+      resourceType,
+    );
 
     res.status(200).json({ success: true, data: { url } });
   };
@@ -78,7 +89,9 @@ export class ClaimController {
     const files = req.files as Express.Multer.File[];
 
     if (!files || files.length === 0) {
-      res.status(400).json({ error: "At least one repair estimate file is required" });
+      res
+        .status(400)
+        .json({ error: "At least one repair estimate file is required" });
       return;
     }
 
@@ -87,7 +100,7 @@ export class ClaimController {
         const base64 = `data:${f.mimetype};base64,${f.buffer.toString("base64")}`;
         const resourceType = f.mimetype === "application/pdf" ? "raw" : "image";
         return this.cloudinaryService["client"].upload(base64, resourceType);
-      })
+      }),
     );
 
     res.status(200).json({ success: true, data: { urls: uploaded } });
@@ -98,7 +111,9 @@ export class ClaimController {
     const files = req.files as Express.Multer.File[];
 
     if (!files || files.length === 0) {
-      res.status(400).json({ error: "At least one medical report file is required" });
+      res
+        .status(400)
+        .json({ error: "At least one medical report file is required" });
       return;
     }
 
@@ -107,7 +122,7 @@ export class ClaimController {
         const base64 = `data:${f.mimetype};base64,${f.buffer.toString("base64")}`;
         const resourceType = f.mimetype === "application/pdf" ? "raw" : "image";
         return this.cloudinaryService["client"].upload(base64, resourceType);
-      })
+      }),
     );
 
     res.status(200).json({ success: true, data: { urls: uploaded } });

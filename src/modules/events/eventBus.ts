@@ -12,16 +12,16 @@ export class EventBus {
 
     this.handlers.get(eventType)!.push(handler);
   }
-    subscribeOnce<T>(eventType: EventType, handler: EventHandler<T>): () => void {
-      const wrapper: EventHandler<T> = (event) => {
+  subscribeOnce<T>(eventType: EventType, handler: EventHandler<T>): () => void {
+    const wrapper: EventHandler<T> = (event) => {
       this.unsubscribe(eventType, wrapper); // ← remove before calling
       return handler(event);
     };
     this.subscribe(eventType, wrapper);
-     return () => this.unsubscribe(eventType, wrapper);
+    return () => this.unsubscribe(eventType, wrapper);
   }
 
-    private unsubscribe(eventType: EventType, handler: EventHandler): void {
+  private unsubscribe(eventType: EventType, handler: EventHandler): void {
     const handlers = this.handlers.get(eventType);
     if (!handlers) return;
     const index = handlers.indexOf(handler);

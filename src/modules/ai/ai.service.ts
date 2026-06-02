@@ -50,7 +50,7 @@ export class AIService {
       ghana_card: DocumentPromptBuilder.buildGhanaCardValidation,
       doctor_report: DocumentPromptBuilder.buildDoctorReportValidation,
     };
-// console.log("AI IS TRIGGERED WITH:", url, docType)
+    // console.log("AI IS TRIGGERED WITH:", url, docType)
     const buildPrompt = promptMap[docType];
     // console.log("Building prompt for document type:", docType, buildPrompt);
     if (!buildPrompt) {

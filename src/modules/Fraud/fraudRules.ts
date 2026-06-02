@@ -215,7 +215,7 @@ export class FraudRules {
       },
     ];
 
-//     // Run all document checks in parallel
+    //     // Run all document checks in parallel
     const docResults = await Promise.allSettled(
       documentsToCheck.map(async (doc) => {
         // console.log("DOCUMENT CHECK:", doc.type, doc.url);
@@ -235,7 +235,7 @@ export class FraudRules {
     for (const settled of docResults) {
       if (settled.status === "rejected" || !settled.value) continue;
       const { doc, result } = settled.value;
-      
+
       const flag: DocumentFlag = {
         docType: doc.label,
         isReused: result.isReused,
@@ -282,43 +282,51 @@ export class FraudRules {
     }
 
     // Check damage images for reuse
-    
+
     for (const settled of docResults) {
-  if (settled.status === "rejected" || !settled.value) continue;
-  const { doc, result } = settled.value;
+      if (settled.status === "rejected" || !settled.value) continue;
+      const { doc, result } = settled.value;
 
-  // ← always push the flag, even if clean
-  const flag: DocumentFlag = {
-    docType:        doc.label,
-    isReused:       result.isReused,
-    isAuthentic:    result.isAuthentic,
-    similarClaimId: result.similarClaimId,
-    suspiciousFlags: result.suspiciousFlags,
-    missingElements: result.missingElements,
-    explanation:    result.explanation,
-  };
-  documentFlags.push(flag);
+      // ← always push the flag, even if clean
+      const flag: DocumentFlag = {
+        docType: doc.label,
+        isReused: result.isReused,
+        isAuthentic: result.isAuthentic,
+        similarClaimId: result.similarClaimId,
+        suspiciousFlags: result.suspiciousFlags,
+        missingElements: result.missingElements,
+        explanation: result.explanation,
+      };
+      documentFlags.push(flag);
 
-  if (result.isReused) {
-    score += doc.reusedScore;
-    reasons.push(`${doc.label} was reused from a previous claim (Claim ID: ${result.similarClaimId})`);
-  }
+      if (result.isReused) {
+        score += doc.reusedScore;
+        reasons.push(
+          `${doc.label} was reused from a previous claim (Claim ID: ${result.similarClaimId})`,
+        );
+      }
 
-  if (!result.isAuthentic) {
-    score += doc.inauthenticScore;
-    reasons.push(`${doc.label} failed authenticity check: ${result.explanation}`);
-  }
+      if (!result.isAuthentic) {
+        score += doc.inauthenticScore;
+        reasons.push(
+          `${doc.label} failed authenticity check: ${result.explanation}`,
+        );
+      }
 
-  if (result.suspiciousFlags.length > 0) {
-    score += result.suspiciousFlags.length * 5;
-    reasons.push(`${doc.label} has suspicious indicators: ${result.suspiciousFlags.join(", ")}`);
-  }
+      if (result.suspiciousFlags.length > 0) {
+        score += result.suspiciousFlags.length * 5;
+        reasons.push(
+          `${doc.label} has suspicious indicators: ${result.suspiciousFlags.join(", ")}`,
+        );
+      }
 
-  if (result.missingElements.length > 0) {
-    score += result.missingElements.length * 3;
-    reasons.push(`${doc.label} is missing: ${result.missingElements.join(", ")}`);
-  }
-}
+      if (result.missingElements.length > 0) {
+        score += result.missingElements.length * 3;
+        reasons.push(
+          `${doc.label} is missing: ${result.missingElements.join(", ")}`,
+        );
+      }
+    }
     const imageChecks = await Promise.allSettled(
       claim.vehicleImages.map((url) =>
         this.documentFraudService.checkDocument(url, "damage_image", claimId),

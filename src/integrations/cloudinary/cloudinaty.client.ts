@@ -7,14 +7,17 @@ export class CloudinaryClient {
   constructor() {
     cloudinary.config({
       cloud_name: config.cloudinaryName,
-      api_key:    config.cloudinaryKey,
+      api_key: config.cloudinaryKey,
       api_secret: config.cloudinarySecret,
     });
   }
 
-  async upload(filePath: string, resourceType: ResourceType = "image"): Promise<string> {
+  async upload(
+    filePath: string,
+    resourceType: ResourceType = "image",
+  ): Promise<string> {
     const result = await cloudinary.uploader.upload(filePath, {
-      folder:        "daica/claims",
+      folder: "daica/claims",
       resource_type: resourceType,
     });
     return result.secure_url;
